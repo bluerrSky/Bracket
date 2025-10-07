@@ -1,0 +1,46 @@
+.introCards{
+    /* padding: 0 1rem; */
+    /* padding: 0.5rem 0 ; */
+    flex: 1;
+    
+    /* background-color: rgb(171	66	120); */
+}
+
+.cardContainer{
+    font-family: pro;
+    width: 25vw;
+    height: 100%;
+    background-color: rgb(42	6	126);
+    opacity: 0.6;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem 1rem;
+    position: relative;
+}
+
+.cardTitle{
+    font-family: var(--ff-content);
+    font-size: var(--font-size-xl);
+    font-weight: 800;
+}
+
+.cardBody{
+    font-size: var(--font-size-md);
+    font-family: var(--ff-content);
+    max-width: 60%;
+    line-height: 1.5;
+}
+
+.cardImg{
+    height: 250px;
+    width: 250px;
+    /* background-color: grey; */
+    /* opacity: 0.4; */
+    position: absolute;
+    right: 0;
+
+    transform: translateX(20%) translateY(-10%);
+    top: 25%;
+}

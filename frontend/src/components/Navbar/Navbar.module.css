@@ -1,0 +1,51 @@
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: var(--clr-primary);
+    padding: 1rem 0.5rem;
+    align-items: center;
+    font-family: var(--ff-heading);
+    padding: 0.5rem 1rem;
+}
+
+.logo{
+    font-size: var(--font-size-lg);
+    display: flex;
+    flex-direction: column;
+    max-width: 8ch;
+    font-family: var(--ff-pageHeader);
+}
+
+.logoFragOne{
+    color: var(--clr-side-kick);
+}
+
+.logoFragTwo{
+    color: var(--clr-accent-1);
+}
+
+.rightNav{
+    display: flex;
+    gap: 1.5rem;
+    font-size: var(--font-size-md);
+}
+
+.rightNav > *{
+    color: var(--clr-secondary);
+}
+
+.profileButton{
+    display: flex;
+    gap: 0.5rem;
+}
+.themeToggle{
+    transform: translateY(5%);
+}
+.profileButton > .avatar{
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background: url(https://api.dicebear.com/9.x/pixel-art/svg?seed=Aidan);
+}
+
