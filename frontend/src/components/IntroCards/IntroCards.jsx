@@ -29,20 +29,23 @@ function Card({ classId, cardTitle, cardBody, cardImg, cardBackground,imgHeight,
 
 export default function IntroCards(){
     return (
+        <>
         <div className={styles.introCards}>
-
+            <Card cardId={2} cardTitle={"Track your Progress"}
+             cardBody={"Get rated after every contest using an ELO-based system. Watch your rating grow and climb the leaderboard."}
+             cardImg={CardWizardImg} cardBackground={`rgb(241	125	91)`} imgHeight={250} imgWidth={300}/>
+             
             <Card cardId={1} cardTitle={"Practice Problems"}
              cardBody={"Sharpen your skills with a curated collection of problems. Filter by topic and difficulty to focus on what matters most."}
              cardImg={CardOneImg} cardBackground={`rgb(78	142	81)`} imgWidth={250} imgHeight={250}/>
 
-            <Card cardId={2} cardTitle={"Track your Progress"}
-             cardBody={"Get rated after every contest using an ELO-based system. Watch your rating grow and climb the leaderboard."}
-             cardImg={CardWizardImg} imgHeight={250} imgWidth={300}/>
+
 
             <Card cardId={3} cardTitle={"Live Contests"}
              cardBody={"Compete in daily and weekly timed contests exclusive to our community. Experience a real-time leaderboard and challenge your peers."}
-             cardImg={CardSwordImg} imgHeight={200} imgWidth={200}/>
+             cardImg={CardSwordImg} imgHeight={180} imgWidth={200}/>
 
         </div>
+        </>
     )
 }

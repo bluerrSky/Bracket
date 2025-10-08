@@ -1,4 +1,5 @@
 import styles from "./Hero.module.css"
+import { Link } from "react-router-dom"
 import HeroImg from "../../assets/images/heroImg.jpg"
 import HeroImg2 from "../../assets/images/heroImg2.png"
 export default function Hero(){
@@ -16,7 +17,7 @@ export default function Hero(){
 
                 <div className={styles.ctaBtns}>
                     <button>Start Tutorial</button>
-                    <button>Sign up</button>
+                    <Link to="login"><button>Sign up</button></Link>
                 </div>
 
             </div>
