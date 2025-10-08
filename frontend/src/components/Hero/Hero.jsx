@@ -16,7 +16,7 @@ export default function Hero(){
                 </div>
 
                 <div className={styles.ctaBtns}>
-                    <button>Start Tutorial</button>
+                    <Link to="choosePath"><button>Start Tutorial</button></Link>
                     <Link to="login"><button>Sign up</button></Link>
                 </div>
 
