@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+
+        @font-face {
+            font-family: heavel;
+            src: url(./frontend/src/assets/fonts/UpheavalPro.ttf);
+        }
+
+        @font-face {
+            font-family: painter;
+            src: url(./frontend/src/assets/fonts/Windows\ Regular.ttf);
+        }
+        
+        @font-face {
+            font-family: jersey;
+            src: url(./frontend/src/assets/fonts/Jersey25-Regular.ttf);
+        }
+
+        body{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            /* background-color: rgb(73, 40, 42); */
+            background: url(./frontend/src/assets/images/background4.png) no-repeat center / cover;
+
+        }
+
+        .cardContainerScroll{
+            height: 500px;
+            width: 62vw;
+            overflow: scroll;
+            /* background-color: lightgray; */
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 1.5rem;
+            padding: 0 1rem;
+            position: relative;
+            margin-top: 8rem;
+        }
+
+        .card{
+            cursor: pointer;
+            height: 100%;
+            min-width: 380px;
+            /* flex: 0; */
+            border-radius: 40px;
+            background-color: lightblue;
+            box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+        }
+
+        .card:nth-child(1){
+            background: url(./frontend/src/assets/images/recursionCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card:nth-child(2){
+            background: url(./frontend/src/assets/images/treeCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card:nth-child(3){
+            background: url(./frontend/src/assets/images/dpCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card:nth-child(4){
+            background: url(./frontend/src/assets/images/arrayCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card:nth-child(5){
+            background: url(./frontend/src/assets/images/graphCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card:nth-child(6){
+            background: url(./frontend/src/assets/images/greedyCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card:nth-child(7){
+            background: url(./frontend/src/assets/images/stackCard.png);
+            background-position: top center;
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .arrow{
+            background-color: black;
+            width: 300px;
+            height: 250px;
+            position: absolute;
+            top: 50%;
+            z-index: 1;
+
+        }
+
+        .arrowLeft{
+            transform: translateY(-50%) translateX(-100%);
+            background: url(./frontend/src/assets/images/arrow5.png) no-repeat  center / contain;
+        }
+
+        .arrowRight{
+            right: 0;
+            transform: translateY(-50%) translateX(100%) rotate(180deg);
+            background: url(./frontend/src/assets/images/arrow5.png) no-repeat  center / contain;
+        }
+
+        .cardContainer{
+            position: relative;
+        }
+
+        .title{
+            font-size: 6rem;
+            position: absolute;
+            width: 100vw;
+            height: 400px;
+            text-align: center;
+            /* top: 5%; */
+            /* transform: translateX(-50%); */
+            color: white;
+            font-family: jersey;
+            background: url(./frontend/src/assets/images/choosePath.png);
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+            transform: translateY(-90%);
+
+        }
+    </style>
+</head>
+<body>
+    <div class="title">
+        <!-- Choose path -->
+    </div>
+    <div class="cardContainer">
+        <div class="arrow arrowLeft"></div>
+        <div class="cardContainerScroll">
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+            <div class="card"></div>
+        </div>
+        <div class="arrow arrowRight"></div>
+    </div>
+</body>
+</html>
