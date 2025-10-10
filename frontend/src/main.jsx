@@ -5,20 +5,28 @@ import './index.css'
 import App from './App.jsx'
 import SignUp from './pages/Signup/Signup.jsx'
 import ChoosePath from './pages/ChoosePathPage/ChoosePath.jsx'
-
+import PathPage from './pages/PathPage/PathPage.jsx'
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <App/>
+        element: <App/>,
+        children:[
+
+              {
+                  path: "path",
+                  element: <ChoosePath/>
+              },
+              {
+                path: "/page/:pageName",
+                element: <PathPage/>
+              }
+        ]
     },
-    {
-        path: "login",
-        element: <SignUp/>
-    },
-    {
-        path: "choosePath",
-        element: <ChoosePath/>
-    }
+      {
+      path: "login",
+      element: <SignUp/>
+  },
+
 ]);
 
 createRoot(document.getElementById('root')).render(

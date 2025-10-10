@@ -2,19 +2,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: column; /* Added to stack title and carousel */
+  flex-direction: column; 
   height: 100vh;
   background: url(../../assets/images/background4.png) no-repeat center / cover;
-  overflow: hidden; /* Prevents arrows from causing page scroll */
+  overflow: hidden;
 }
 
 .title {
   font-size: 6rem;
   position: absolute;
   width: 100vw;
-  height: 400px;
+  height: 300px;
   text-align: center;
-  top: 15%; /* Adjusted positioning */
+  top: 22%;
   color: white;
   font-family: jersey;
   background-position: center;

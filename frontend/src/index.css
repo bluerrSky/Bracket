@@ -13,6 +13,11 @@
     src: url(./assets/fonts/Jersey25-Regular.ttf);
 }
 
+@font-face {
+    font-family: Inter;
+    src: url(./assets/fonts/InterVariable.ttf);
+}
+
 *, *::after, *::before{
     padding: 0;
     margin: 0;
@@ -23,7 +28,7 @@
     --ff-pageHeader: upHeavel;
     --ff-heading: painterVision;
     --ff-content: jersey;
-
+    --ff-pageContent: Inter;
     --font-size-sm:   clamp(0.8rem, 0.17vw + 0.75rem, 0.94rem);
     --font-size-base: clamp(1rem, 0.34vw + 0.6rem, 1.25rem);
     --font-size-md:   clamp(1.3rem, 0.7vw + 0.8rem, 1.8rem);

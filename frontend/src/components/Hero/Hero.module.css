@@ -34,7 +34,7 @@
     display: flex;
     gap: 1.2rem;
 }
-button{
+.ctaBtns button{
     padding: 1rem 1.5rem;
     border: 2px solid var(--clr-side-kick);
     background-color: var(--clr-primary);
@@ -42,6 +42,7 @@ button{
     border-radius: 8px;
     font-size: calc(var(--font-size-base) + 0.6rem);
     font-family: inherit;
+    cursor: pointer;
 }
 
 .heroImg{
