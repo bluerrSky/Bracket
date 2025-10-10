@@ -6,6 +6,7 @@ import App from './App.jsx'
 import SignUp from './pages/Signup/Signup.jsx'
 import ChoosePath from './pages/ChoosePathPage/ChoosePath.jsx'
 import PathPage from './pages/PathPage/PathPage.jsx'
+import REPL from './pages/REPL/REPL.jsx'
 const router = createBrowserRouter([
     {
         path: "/",
@@ -19,7 +20,12 @@ const router = createBrowserRouter([
               {
                 path: "/page/:pageName",
                 element: <PathPage/>
+              },
+              {
+                path: "/page/:pageName/:problemID",
+                element: <REPL/>
               }
+
         ]
     },
       {

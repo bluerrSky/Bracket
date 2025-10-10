@@ -9,6 +9,7 @@ import graphCard from '../../assets/images/graphCard.png';
 import greedyCard from '../../assets/images/greedyCard.png';
 import stackCard from '../../assets/images/stackCard.png';
 import arrowImage from '../../assets/images/arrow5.png';
+import { Link } from "react-router";
 
 
 const cardImages = [
@@ -34,11 +35,13 @@ const Carousel = () => {
       ></div>
       <div className={styles.cardContainerScroll} ref={scrollContainerRef}>
         {cardImages.map((image, index) => (
-          <div
-            key={index}
-            className={styles.card}
-            style={{ backgroundImage: `url(${image})` }}
-          ></div>
+            <Link to="/page/dp">
+              <div
+                key={index}
+                className={styles.card}
+                style={{ backgroundImage: `url(${image})` }}
+            ></div>
+            </Link>
         ))}
       </div>
       <div
