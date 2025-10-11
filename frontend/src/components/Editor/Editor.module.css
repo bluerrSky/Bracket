@@ -25,6 +25,8 @@ button{
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid #333;
+  position: sticky;
+  top: 0px;
 }
 
 .editor {

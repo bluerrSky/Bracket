@@ -7,9 +7,9 @@ export default function Hero(){
         <div className={styles.Hero}>
             <div className={styles.heroContent}>
                 <div className={styles.heroTitle}>
-                    <span className={styles.frag-1}>Code. </span>
-                    <span className={styles.frag-2}>Compete. </span>
-                    <span className={styles.frag-3}>Conquer. </span>
+                    <span className={styles['frag-1']}>Code. </span>
+                    <span className={styles['frag-2']}>Compete. </span>
+                    <span className={styles['frag-3']}>Conquer. </span>
                 </div>
                 <div className={styles.ctaText}>
                     Step into the arena and challenge coders in real-time battles.

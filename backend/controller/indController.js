@@ -27,6 +27,7 @@ const logAuth=passport.authenticate('local',(err,user,info)=>{
 });
 const signAuth=async function(req,res){
     try{
+        console.log("Sign up attempted.")
         const hashPass=await bcrypt.hash(req.body.password,12);
         const {rows}=await pool.query('Insert into users (username,email,password) values ($1,$2,$3) RETURNING user_id,username,email;',[
             req.body.username,
