@@ -7,6 +7,8 @@ import SignUp from './pages/Signup/Signup.jsx'
 import ChoosePath from './pages/ChoosePathPage/ChoosePath.jsx'
 import PathPage from './pages/PathPage/PathPage.jsx'
 import REPL from './pages/REPL/REPL.jsx'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+const queryClient = new QueryClient();
 const router = createBrowserRouter([
     {
         path: "/",
@@ -37,6 +39,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router}/>
+    </QueryClientProvider>
   </StrictMode>,
 )

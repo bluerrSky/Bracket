@@ -1,4 +1,3 @@
-import Test from "./components/Test/test";
 import Navbar from "./components/Navbar/Navbar";
 import Hero from "./components/Hero/Hero";
 import IntroCards from "./components/IntroCards/IntroCards";
