@@ -1,8 +1,8 @@
 import styles from "./IntroCards.module.css"
 import CardOneImg from "../../assets/images/vintageComp1.png"
 import CardOneImg2 from "../../assets/images/vintageComp2.png"
-import CardWizardImg from "../../assets/images/CardWizardImg.png"
-import CardSwordImg from "../../assets/images/CardSwordImg.png"
+import CardWizardImg from "../../assets/images/cardWizardImg.png"
+import CardSwordImg from "../../assets/images/cardSwordImg.png"
 function Card({ classId, cardTitle, cardBody, cardImg, cardBackground,imgHeight,  imgWidth}) {
     return (
         <div 
