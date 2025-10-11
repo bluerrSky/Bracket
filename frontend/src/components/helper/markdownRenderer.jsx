@@ -3,10 +3,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css"; // You can choose any theme
-
-const TutorialSection = ({ content }) => {
+import styles from "./markdownRenderer.module.css"
+const RenderMarkdown = ({ content }) => {
   return (
-    <div className="prose prose-invert max-w-none p-6 overflow-y-auto bg-[#0a0a0a] rounded-xl shadow-lg">
+    <div className={styles["markdown-container"]}>
       <ReactMarkdown
         children={content}
         remarkPlugins={[remarkGfm]}
@@ -16,4 +16,4 @@ const TutorialSection = ({ content }) => {
   );
 };
 
-export default TutorialSection;
+export default RenderMarkdown;

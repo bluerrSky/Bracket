@@ -1,0 +1,20 @@
+.editorContainer{
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0px;
+}
+.editor{
+    font-size: var(--font-size-md);
+}
+
+.editorCtrlBtns{
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    padding: 1rem;
+}
+
+button{
+    cursor: pointer;
+}

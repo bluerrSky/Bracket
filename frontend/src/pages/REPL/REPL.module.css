@@ -1,0 +1,12 @@
+.REPLContainer{
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    
+    /* height: 100vh; */
+}
+
+.problemDesc{
+    grid-area: 1/1/1/2;
+    /* background-color: red; */
+}
+

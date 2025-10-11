@@ -1,5 +1,5 @@
 import styles from "./PathContent.module.css"
-import TutorialSection from "./Content";
+import RenderMarkdown from "../helper/markdownRenderer";
 
 const dpLesson = `
 Welcome, traveler, to the art of **Dynamic Programming (DP)**.
@@ -156,9 +156,7 @@ export default function PathContent(){
                     <div className={styles.sectionTitle}>
                         Introduction to DP
                     </div>
-                    <div className={styles['markdown-container']}>
-                        <TutorialSection content={dpLesson} />
-                    </div>
+                    <RenderMarkdown content={dpLesson} />
                 </div>
             </div>
         </div>
