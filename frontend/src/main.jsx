@@ -8,8 +8,11 @@ import ChoosePath from './pages/ChoosePathPage/ChoosePath.jsx'
 import PathPage from './pages/PathPage/PathPage.jsx'
 import REPL from './pages/REPL/REPL.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthProvider } from './context/AuthContext'; // 👈 Import AuthProvider
+
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
+    // ... your router config remains the same
     {
         path: "/",
         element: <App/>,
@@ -40,7 +43,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router}/>
+      <AuthProvider> {/* 👈 Wrap with AuthProvider */}
+        <RouterProvider router={router}/>
+      </AuthProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

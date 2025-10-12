@@ -1,6 +1,10 @@
 import styles from "./Navbar.module.css"
 import DarkThemeIcon from "../Icons/darkThemeIcon"
+import { useAuth } from "../../context/AuthContext"; // 👈 Import useAuth
+
 export default function Navbar(){
+    const { user } = useAuth(); // 👈 Get user from context
+
     return (
         <div className={styles.navbar}>
             <div className={styles.leftNav}>
@@ -16,15 +20,17 @@ export default function Navbar(){
                 <div className={styles.themeToggle}>
                     <DarkThemeIcon/>
                 </div>
-                <div className={styles.profileButton}>
-                    <div className={styles.avatar}></div>
-                    <div className={styles.name}>
-                        TestUser
+
+                {/* 👇 --- THIS IS THE DYNAMIC PART --- 👇 */}
+                {user && (
+                    <div className={styles.profileButton}>
+                        <div className={styles.avatar}></div>
+                        <div className={styles.name}>
+                            {user.username} {/* Display the dynamic username */}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
-            
         </div>
     )
 }
-

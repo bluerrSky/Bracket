@@ -2,7 +2,11 @@ import styles from "./Hero.module.css"
 import { Link } from "react-router-dom"
 import HeroImg from "../../assets/images/heroImg.jpg"
 import HeroImg2 from "../../assets/images/heroImg2.png"
+import { useAuth } from "../../context/AuthContext"; // 👈 1. Import useAuth
+
 export default function Hero(){
+    const { user } = useAuth(); // 👈 2. Get the user state
+
     return (
         <div className={styles.Hero}>
             <div className={styles.heroContent}>
@@ -17,7 +21,11 @@ export default function Hero(){
 
                 <div className={styles.ctaBtns}>
                     <Link to="path"><button>Start Tutorial</button></Link>
-                    <Link to="login"><button>Sign up</button></Link>
+
+                    {/* 👇 3. Conditionally render the sign up button */}
+                    {!user && (
+                        <Link to="login"><button>Sign up</button></Link>
+                    )}
                 </div>
 
             </div>

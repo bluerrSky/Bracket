@@ -1,53 +1,55 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom"; // 👈 Import useNavigate
+import { useAuth } from "../../context/AuthContext"; // 👈 Import useAuth
 import styles from "./Signup.module.css";
 
-// --- The API call function now uses the native fetch API ---
 const registerUser = async (userData) => {
+    // ... your fetch logic remains the same
     const response = await fetch("http://localhost:8080/signup", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify(userData), // Manually stringify the request body
+        body: JSON.stringify(userData),
     });
-
-    // We need to parse the JSON response body to access the data
     const data = await response.json();
-
-    // fetch doesn't throw an error on bad HTTP status, so we check response.ok
     if (!response.ok) {
-        // We throw an error with the message from the backend
         throw new Error(data.message || "An unexpected error occurred.");
     }
-
-    return data; // On success, return the parsed data
+    return data;
 };
 
 export default function SignUp() {
-    // 1. State for form data remains the same.
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         password: "",
     });
 
-    // 2. --- TanStack Query replaces isLoading, error, and success states ---
+    const navigate = useNavigate(); // 👈 Initialize useNavigate
+    const { login } = useAuth(); // 👈 Get the login function from our context
+
     const mutation = useMutation({
-        mutationFn: registerUser, // The function to call when submitting
+        mutationFn: registerUser,
         onSuccess: (data) => {
-            // This runs on a successful API call (HTTP 2xx)
+            // This runs on a successful API call
             console.log("User registered successfully!", data);
-            // You can add logic here to redirect the user, e.g., navigate('/login');
+
+            // 👇 --- THIS IS THE NEW LOGIC --- 👇
+            // 1. Update the global state with the user's data
+            login(data.user); 
+
+            // 2. Redirect to the homepage
+            navigate('/');
         },
         onError: (error) => {
-            // This runs when the API call fails
             console.error("Registration failed:", error.message);
         },
     });
 
-    // 3. Handle input changes (this logic doesn't change)
     const handleChange = (e) => {
+        // ... this function remains the same
         const { name, value } = e.target;
         setFormData(prevData => ({
             ...prevData,
@@ -55,12 +57,11 @@ export default function SignUp() {
         }));
     };
 
-    // 4. Handle form submission (now much simpler)
     const handleSubmit = (e) => {
+        // ... this function remains the same
         e.preventDefault();
-        // Call mutation.mutate to trigger the API call with the form data
         const userData = {
-            username: formData.name, // Use 'username' as per backend
+            username: formData.name,
             email: formData.email,
             password: formData.password
         };
@@ -68,7 +69,8 @@ export default function SignUp() {
     };
 
     return (
-        <div className={styles.mainContainer}>
+        // ... your JSX remains the same
+                <div className={styles.mainContainer}>
             <div className={styles.signContainer}>
                 <div className={styles.left}></div>
                 <div className={styles.right}>
@@ -118,4 +120,3 @@ export default function SignUp() {
         </div>
     );
 }
-
