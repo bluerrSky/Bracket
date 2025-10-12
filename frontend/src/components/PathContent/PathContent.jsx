@@ -1,6 +1,6 @@
 import styles from "./PathContent.module.css"
 import RenderMarkdown from "../helper/markdownRenderer";
-
+import ProblemList from "../ProblemList/ProblemList";
 const dpLesson = `
 Welcome, traveler, to the art of **Dynamic Programming (DP)**.
 
@@ -157,6 +157,7 @@ export default function PathContent(){
                         Introduction to DP
                     </div>
                     <RenderMarkdown content={dpLesson} />
+                    <ProblemList/>
                 </div>
             </div>
         </div>

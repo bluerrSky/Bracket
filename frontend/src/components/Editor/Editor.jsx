@@ -1,95 +1,84 @@
-import React, { useState } from "react";
-import Editor from "@monaco-editor/react";
-import { useMutation } from "@tanstack/react-query";
-import styles from "./Editor.module.css";
+import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import styles from './Editor.module.css';
+// Assuming you are using a code editor like Monaco
+import Editor from '@monaco-editor/react'; 
 
-// This is an asynchronous function that will handle the API call.
-// TanStack Query's useMutation hook will call this function.
-const submitCodeToBackend = async ({ language, code }) => {
-  // Replace this with the actual URL of your backend endpoint
-  const API_ENDPOINT = "/api/submit"; 
-
-  const response = await fetch(API_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ language, code }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Something went wrong");
-  }
-
-  return response.json();
+// --- API call function for submission ---
+const submitCode = async (submissionData) => {
+    const response = await fetch("http://localhost:8080/submit", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submissionData),
+    });
+    if (!response.ok) {
+        throw new Error('Submission failed');
+    }
+    return response.json();
 };
 
-export default function CodeEditor() {
-  const [code, setCode] = useState("# Write your Python code here\nprint('Hello from the editor!')");
+export default function CodeEditor({ problemID }) {
+    const [code, setCode] = useState("// Write your C++ code here\n\n#include <iostream>\n\nint main() {\n    // Your code goes here\n    return 0;\n}");
+    const [languageId, setLanguageId] = useState(54); // Default to C++ (GCC 9.2.0) on Judge0
 
-  // --- TanStack Query Mutation ---
-  // useMutation handles the entire lifecycle of the POST request.
-  const mutation = useMutation({
-    mutationFn: submitCodeToBackend,
-    onSuccess: (data) => {
-      // This function runs if the API call is successful.
-      // 'data' is the response from your backend.
-      console.log("Submission successful!", data);
-      // You could show a success message or the result from the backend here.
-    },
-    onError: (error) => {
-      // This function runs if the API call fails.
-      console.error("Submission error:", error.message);
-      // You could show an error toast or message here.
-    },
-  });
+    // --- TanStack Query Mutation for submitting the code ---
+    const mutation = useMutation({
+        mutationFn: submitCode,
+        onSuccess: (data) => {
+            console.log("Submission successful!", data);
+            // Here you can display the verdict (e.g., Accepted, Wrong Answer)
+            alert(`Verdict: ${data.verdict}`); 
+        },
+        onError: (error) => {
+            console.error("Submission error:", error);
+            alert(`Error: ${error.message}`);
+        },
+    });
 
-  // This function is called when the submit button is clicked.
-  const handleSubmit = () => {
-    // We call mutation.mutate to trigger the API call.
-    // The object passed here will be the argument to 'submitCodeToBackend'.
-    mutation.mutate({ language: "python", code: code });
-  };
-  
-  // A simple run function for local testing
-  const runCode = () => {
-    console.log("Running code locally:", code);
-    alert("This is just a local run. Use 'Submit' to send to the backend. 🐍");
-  };
+    const handleSubmit = () => {
+        if (!code.trim()) {
+            alert("Code cannot be empty!");
+            return;
+        }
+        const submissionData = {
+            source_code: code,
+            language_id: languageId,
+            problem_id: problemID,
+        };
+        mutation.mutate(submissionData);
+    };
 
-  return (
-    <div className={styles.editorContainer}>
-      <Editor
-        height="70vh"
-        defaultLanguage="python"
-        value={code}
-        onChange={(value) => setCode(value)}
-        theme="vs-dark"
-        className={styles.editor}
-        options={{
-          fontSize: 16,
-          minimap: { enabled: false },
-        }}
-      />
-
-      {/* Display submission status */}
-      <div className={styles.statusContainer}>
-        {mutation.isLoading && <p>Submitting...</p>}
-        {mutation.isSuccess && <p style={{color: 'green'}}>Submission successful! Check console for data.</p>}
-        {mutation.isError && <p style={{color: 'red'}}>Error: {mutation.error.message}</p>}
-      </div>
-
-      <div className={styles.editorCtrlBtns}>
-        <button onClick={runCode}>▶ Run</button>
-        <button 
-          onClick={handleSubmit} 
-          disabled={mutation.isLoading} // Disable button while submitting
-          style={{ marginLeft: "10px" }}
-        >
-          {mutation.isLoading ? "Submitting..." : "Submit Answer"}
-        </button>
-      </div>
-    </div>
-  );
+    return (
+        <div className={styles.editorContainer}>
+            <div className={styles.controls}>
+                 {/* You can add a language selector here if you want */}
+                 <span>Language: C++</span>
+            </div>
+            <Editor
+                height="calc(100vh - 150px)" // Adjust height as needed
+                defaultLanguage="cpp"
+                theme="vs-dark"
+                value={code}
+                onChange={(value) => setCode(value)}
+            />
+            <div className={styles.submissionControls}>
+                <button 
+                    onClick={handleSubmit} 
+                    disabled={mutation.isLoading}
+                    className={styles.submitButton}
+                >
+                    {mutation.isLoading ? 'Submitting...' : 'Submit Code'}
+                </button>
+            </div>
+             {/* Optional: Display results directly in the component */}
+             {mutation.isSuccess && (
+                <div className={styles.results}>
+                    <h3>Result</h3>
+                    <pre>{JSON.stringify(mutation.data, null, 2)}</pre>
+                </div>
+            )}
+        </div>
+    );
 }

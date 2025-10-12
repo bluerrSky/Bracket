@@ -52,4 +52,38 @@ const signAuth=async function(req,res){
     }
 }
 
-module.exports={getInd,logAuth,signAuth};
+const getProblemByID = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await pool.query(
+            'SELECT problem_id, category, title, description, difficulty, time_limit, memory_limit FROM problems WHERE problem_id = $1',
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Problem not found' });
+        }
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error fetching problem:', err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+
+const getProblemsByCategory = async (req, res) => {
+    const { category } = req.params;
+    try {
+        const result = await pool.query(
+            'SELECT problem_id, title, difficulty FROM problems WHERE category = $1',
+            [category]
+        );
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching problems by category:', err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+module.exports={getInd,logAuth,signAuth, getProblemByID, getProblemsByCategory};
