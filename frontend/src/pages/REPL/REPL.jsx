@@ -84,6 +84,27 @@ export default function REPL() {
                         <p className={styles.hintError}>{hint}</p>
                     )}
                 </div>
+                <div className={styles.resourcesContainer}>
+                    <button onClick={handleGetResources} disabled={resourcesMutation.isLoading}>
+                        {resourcesMutation.isLoading ? 'Searching...' : 'Suggest Resources 📚'}
+                    </button>
+                    
+                    {resourcesMutation.isSuccess && (
+                        <div className={styles.resourcesList}>
+                            <h4>Here are some helpful resources:</h4>
+                            <ul>
+                                {resources.map((resource, index) => (
+                                    <li key={index}>
+                                        <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                                            {resource.title}
+                                        </a>
+                                        <p>{resource.description}</p>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
