@@ -29,6 +29,7 @@ passport.serializeUser((user,done)=>{
     done(null,user.user_id);
 });
 passport.deserializeUser(async(id,done)=>{
+    console.log('--- ATTEMPTING TO DESERIALIZE USER WITH ID:', id);
     try{
         const {rows}= await pool.query('select * from users where user_id=$1',[id]);
         const user=rows[0];

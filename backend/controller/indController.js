@@ -8,23 +8,22 @@ function getInd(req,res){
         status:'success'
     });
 }
-const logAuth=passport.authenticate('local',(err,user,info)=>{
-    if(err){
-        return res.status(500).json({success:false,message:'Internal server error'});
-    }
-    if(!user){
-        return res.status(401).json({success:false,message:info.message});
-
-    }
-    req.login(user,(err)=>{
-        if(err){
-            return res.status(500).json({success:false,message:'Login failed'});
-
+const logAuth = (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Internal server error' });
         }
-        return res.status(200).json({success:true,user,message:'Login successful'});
-
-    })
-});
+        if (!user) {
+            return res.status(401).json({ success: false, message: info.message });
+        }
+        req.login(user, (err) => {
+            if (err) {
+                return res.status(500).json({ success: false, message: 'Login failed' });
+            }
+            return res.status(200).json({ success: true, user, message: 'Login successful' });
+        });
+    })(req, res, next);
+};
 const signAuth=async function(req,res){
     try{
         const hashPass=await bcrypt.hash(req.body.password,12);
@@ -50,6 +49,18 @@ const signAuth=async function(req,res){
         return res.status(500).json({success:false,message:'Server error!'});
     }
 }
+
+
+
+const checkAuth=function (req,res){
+    if(req.isAuthenticated()){
+        return res.status(200).json({success:true,user:req.user});
+    }else{
+        return res.status(401).json({success:false,message:'User not authenticated'});
+    }
+}
+
+
 const getProblemById= async function(req,res){
     try{
         const {id}=req.params;
@@ -82,4 +93,4 @@ const getProblemsByCat=async function(req,res){
     }
 }
 
-module.exports={getInd,logAuth,signAuth,getProblemById,getProblemsByCat};
+module.exports={getInd,logAuth,signAuth,checkAuth,getProblemById,getProblemsByCat};
