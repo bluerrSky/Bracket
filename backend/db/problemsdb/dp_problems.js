@@ -274,7 +274,39 @@ Print the number of paths modulo 10^9+7.
     difficulty: 'Medium',
     time_limit: 1,
     memory_limit: 524288
-  }
+  },
+  {
+  problem_id: 7,
+    category: 'Dynamic Programming',
+    title: 'Hello World',
+    description: `
+Your first program should print "Hello, World!" to the standard output.
+
+### Input
+\`\`\`
+No input.
+\`\`\`
+
+### Output
+\`\`\`
+Print exactly:
+Hello, World!
+\`\`\`
+
+### Example
+**Input:**
+\`\`\`
+\`\`\`
+**Output:**
+\`\`\`
+Hello, World!
+\`\`\`
+`,
+    difficulty: 'Easy',
+    time_limit: 1,
+    memory_limit: 2048
+  },
+
 ];
 
 module.exports = { problems };

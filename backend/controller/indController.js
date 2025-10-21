@@ -27,7 +27,6 @@ const logAuth=passport.authenticate('local',(err,user,info)=>{
 });
 const signAuth=async function(req,res){
     try{
-        console.log("Sign up attempted.")
         const hashPass=await bcrypt.hash(req.body.password,12);
         const {rows}=await pool.query('Insert into users (username,email,password) values ($1,$2,$3) RETURNING user_id,username,email;',[
             req.body.username,
@@ -51,39 +50,36 @@ const signAuth=async function(req,res){
         return res.status(500).json({success:false,message:'Server error!'});
     }
 }
-
-const getProblemByID = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const result = await pool.query(
-            'SELECT problem_id, category, title, description, difficulty, time_limit, memory_limit FROM problems WHERE problem_id = $1',
-            [id]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Problem not found' });
+const getProblemById= async function(req,res){
+    try{
+        const {id}=req.params;
+        const problem=await pool.query(`select problem_id,category,title,description,difficulty,time_limit,memory_limit from problems where problem_id=$1`,[id]);
+        if(problem.rows.length===0){
+            return res.status(404).json({message:`No problem found with id = ${id}`});
         }
 
-        res.json(result.rows[0]);
-    } catch (err) {
-        console.error('Error fetching problem:', err.message);
-        res.status(500).json({ error: 'Server error' });
+        return res.status(200).json(problem.rows[0]);
+
+        
+
+    }catch(err){
+        console.error(err.message);
+        return res.status(500).json({message:'Server error while fetching the problem.'});
     }
-};
+}
 
-
-const getProblemsByCategory = async (req, res) => {
-    const { category } = req.params;
-    try {
-        const result = await pool.query(
-            'SELECT problem_id, title, difficulty FROM problems WHERE category = $1',
-            [category]
-        );
-        res.json(result.rows);
-    } catch (err) {
-        console.error('Error fetching problems by category:', err.message);
-        res.status(500).json({ error: 'Server error' });
+const getProblemsByCat=async function(req,res){
+    try{
+        const {category}=req.params;
+        const problems=await pool.query(`select problem_id,category,title,description,difficulty,time_limit,memory_limit from problems where category=$1`,[category]);
+        if(problems.rows.length===0){
+            return res.status(404).json({message:`No problems found in category = ${category}`});
+        }
+        return res.status(200).json(problems.rows);
+    }catch(err){
+        console.error(err.message);
+        return res.status(500).json({message:'Server error while fetching problems.'})
     }
-};
+}
 
-module.exports={getInd,logAuth,signAuth, getProblemByID, getProblemsByCategory};
+module.exports={getInd,logAuth,signAuth,getProblemById,getProblemsByCat};
