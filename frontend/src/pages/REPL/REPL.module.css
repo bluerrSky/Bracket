@@ -10,3 +10,24 @@
     /* background-color: red; */
 }
 
+/* In frontend/src/pages/REPL/REPL.module.css */
+
+.hintContainer {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #2a2d3b;
+    border-radius: 5px;
+}
+
+.hintText {
+    color: #a9b3d1;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap; /* Allows the hint to wrap nicely */
+    margin-top: 10px;
+}
+
+.hintError {
+    color: #ff8080;
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 10px;
+}

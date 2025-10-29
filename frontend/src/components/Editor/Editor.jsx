@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import styles from './Editor.module.css';
-// Assuming you are using a code editor like Monaco
-import Editor from '@monaco-editor/react'; 
+import Editor from '@monaco-editor/react';
 
-// --- API call function for submission ---
+// --- API call function for submission (no change here) ---
 const submitCode = async (submissionData) => {
     const response = await fetch("http://localhost:8080/submit", {
         method: "POST",
@@ -19,17 +18,16 @@ const submitCode = async (submissionData) => {
     return response.json();
 };
 
-export default function CodeEditor({ problemID }) {
+//  Add the new `onCodeChange` prop
+export default function CodeEditor({ problemID, onCodeChange }) {
     const [code, setCode] = useState("// Write your C++ code here\n\n#include <iostream>\n\nint main() {\n    // Your code goes here\n    return 0;\n}");
-    const [languageId, setLanguageId] = useState(54); // Default to C++ (GCC 9.2.0) on Judge0
+    const [languageId, setLanguageId] = useState(54);
 
-    // --- TanStack Query Mutation for submitting the code ---
     const mutation = useMutation({
         mutationFn: submitCode,
         onSuccess: (data) => {
             console.log("Submission successful!", data);
-            // Here you can display the verdict (e.g., Accepted, Wrong Answer)
-            alert(`Verdict: ${data.verdict}`); 
+            alert(`Verdict: ${data.verdict}`);
         },
         onError: (error) => {
             console.error("Submission error:", error);
@@ -51,30 +49,34 @@ export default function CodeEditor({ problemID }) {
         mutation.mutate(submissionData);
     };
 
+    //  This function will now handle both local state and notify the parent
+    const handleEditorChange = (value) => {
+        setCode(value); // Update the local state for the submit button
+        onCodeChange(value); // Call the function passed from the parent (REPL.jsx)
+    };
+
     return (
         <div className={styles.editorContainer}>
             <div className={styles.controls}>
-                 {/* You can add a language selector here if you want */}
-                 <span>Language: C++</span>
+                <span>Language: C++</span>
             </div>
             <Editor
-                height="calc(100vh - 150px)" // Adjust height as needed
+                height="calc(100vh - 150px)"
                 defaultLanguage="cpp"
                 theme="vs-dark"
                 value={code}
-                onChange={(value) => setCode(value)}
+                onChange={handleEditorChange} // Use the new handler function
             />
             <div className={styles.submissionControls}>
-                <button 
-                    onClick={handleSubmit} 
+                <button
+                    onClick={handleSubmit}
                     disabled={mutation.isLoading}
                     className={styles.submitButton}
                 >
                     {mutation.isLoading ? 'Submitting...' : 'Submit Code'}
                 </button>
             </div>
-             {/* Optional: Display results directly in the component */}
-             {mutation.isSuccess && (
+            {mutation.isSuccess && (
                 <div className={styles.results}>
                     <h3>Result</h3>
                     <pre>{JSON.stringify(mutation.data, null, 2)}</pre>

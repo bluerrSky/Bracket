@@ -1,152 +1,114 @@
-const axios = require('axios');
-const pool = require('../db/pool');
-require('dotenv').config();
-
-// A helper map to convert Judge0 status IDs to human-readable verdicts.
-const verdictMap = {
-    1: "In Queue",
-    2: "Processing",
-    3: "Accepted",
-    4: "Wrong Answer",
-    5: "Time Limit Exceeded",
-    6: "Compilation Error",
-    7: "Runtime Error (SIGSEGV)",
-    8: "Runtime Error (SIGXFSZ)",
-    9: "Runtime Error (SIGFPE)",
-    10: "Runtime Error (SIGABRT)",
-    11: "Runtime Error (NZEC)",
-    12: "Runtime Error (Other)",
-    13: "Internal Error",
-    14: "Exec Format Error"
-};
+const axios=require('axios');
+const url =process.env.JUDGE0_URL;
+const pool=require('../db/pool');
 
 
-/**
- * A helper function to add a delay.
- * @param {number} ms - The number of milliseconds to wait.
- * @returns {Promise} A promise that resolves after the specified delay.
- */
-const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const headers={
+    'content-type': 'application/json',
+        'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+        'X-RapidAPI-Host': process.env.RAPIDAPI_HOST
+}
 
+const maxPollingTime=60000;
+const interval=2000;
+const sleep=(ms)=>new Promise(resolve=>setTimeout(resolve,ms));
 
-/**
- * Handles a new code submission.
- * - Fetches test cases from the database.
- * - Submits the code and test cases to Judge0 in a batch.
- * - Polls Judge0 for the results.
- * - Determines the final verdict.
- * - Saves the submission to the database.
- * - Sends the final verdict back to the client.
- */
-const newSub = async (req, res) => {
-    // --- Environment Variable Validation ---
-    const { JUDGE0_URL, RAPIDAPI_KEY, RAPIDAPI_HOST } = process.env;
-    if (!JUDGE0_URL || !RAPIDAPI_KEY || !RAPIDAPI_HOST) {
-        console.error("Missing required environment variables for Judge0 API.");
-        return res.status(500).json({ error: "Server configuration error: Missing API credentials for code execution service." });
+async function newSub(req,res){
+    const {source_code,language_id,problem_id}=req.body;
+    if(!source_code || ! language_id || !problem_id){
+        return res.status(400).json({error:"Missing required fields."});
     }
+    const sc=Buffer.from(source_code).toString('base64');
 
-    const { source_code, language_id, problem_id } = req.body;
-    console.log("Received submission:", { source_code, language_id, problem_id });
-    
-    // In a real application, you would get the user_id from the authenticated session.
-    // const user_id = req.user.id; 
-    const user_id = 1; // Placeholder user_id
+    try{
+        let testCases=await pool.query(`select input,expected_output from test_cases where problem_id=$1`,[problem_id]);
+        testCases=testCases.rows;
+        const limits=await pool.query(`select time_limit,memory_limit from problems where problem_id=$1`,[problem_id]);
+        const {time_limit,memory_limit}=limits.rows[0];
 
-    if (!source_code || !language_id || !problem_id) {
-        return res.status(400).json({ error: 'Missing required fields: source_code, language_id, problem_id' });
-    }
-
-    try {
-        // 1. Fetch all test cases for the given problem from your database.
-        const testCasesResult = await pool.query('SELECT input, expected_output FROM test_cases WHERE problem_id = $1', [problem_id]);
-        const testCases = testCasesResult.rows;
-
-        if (testCases.length === 0) {
-            return res.status(404).json({ error: 'Test cases for the specified problem not found.' });
+        if(!testCases.length || !time_limit || !memory_limit){
+            return res.status(404).json({error:'Problem or test cases not found'});
         }
-
-        // 2. Prepare the submission data for Judge0's batch submission endpoint.
-        const submissions = testCases.map(tc => ({
+        const submissions=testCases.map(tc=>{
+            return {
+            source_code:sc,
             language_id,
-            source_code,
-            stdin: tc.input,
-            expected_output: tc.expected_output.trim(),
-        }));
-        
-        // 3. Post the batch submission to Judge0.
-        const judge0PostOptions = {
-            method: 'POST',
-            url: `${JUDGE0_URL}/submissions/batch`,
-            params: { base64_encoded: 'false', wait: 'false' },
-            headers: {
-                'content-type': 'application/json',
-                'X-RapidAPI-Key': RAPIDAPI_KEY,
-                'X-RapidAPI-Host': RAPIDAPI_HOST
-            },
-            data: { submissions }
-        };
-        
-        const postResponse = await axios.request(judge0PostOptions);
-        const tokens = postResponse.data.map(s => s.token);
-        const tokenString = tokens.join(',');
+            stdin:Buffer.from(tc.input).toString('base64'),
+            expected_output:Buffer.from(tc.expected_output).toString('base64'),
+            cpu_time_limit:time_limit,
+            memory_limit:memory_limit
 
-        // 4. Poll Judge0 for the results using the submission tokens.
+        }});
+        const response=await axios.post(`${url}/submissions/batch?base64_encoded=true&wait=false`,{submissions},{headers});
+
+        let tokens=response.data.map(x=>x.token);
+        tokens=tokens.join(',');
+
+        let time=0;
+        let finished=false;
         let results;
-        while (true) {
-            const judge0GetOptions = {
-                method: 'GET',
-                url: `${JUDGE0_URL}/submissions/batch`,
-                params: { tokens: tokenString, base64_encoded: 'false', fields: 'status_id,time,memory' },
-                headers: {
-                    'X-RapidAPI-Key': RAPIDAPI_KEY,
-                    'X-RapidAPI-Host': RAPIDAPI_HOST
-                }
-            };
+        while(time<maxPollingTime){
+            const response=await axios.get(`${url}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=*`,{headers})
+            results=response.data.submissions;
 
-            const getResponse = await axios.request(judge0GetOptions);
-            const submissionsResults = getResponse.data.submissions;
-
-            // Check if all submissions have finished processing (status > 2).
-            const allFinished = submissionsResults.every(result => result.status_id > 2);
-            if (allFinished) {
-                results = submissionsResults;
+            finished=results.every(res=> res.status.id>2);
+            if(finished){
                 break;
             }
-
-            await sleep(2000); // Wait for 2 seconds before polling again.
+            await sleep(interval);
+            time+=interval;
+        }
+        if(!finished){
+            console.error('Polling timed out');
+            return res.status(500).json({error:'Submission time out!'});
         }
 
-        // 5. Determine the final verdict.
-        let finalVerdict = "Accepted";
-        let totalTime = 0;
-        let maxMemory = 0;
+        const overallResults=results.map(res=>{
+            return {
+                status:res.status.description,
+                time:res.time,
+                memory:res.memory,
+                error:res.stderr?Buffer.from(res.stderr,'base64').toString():null,
+                compile_output:res.compile_output?Buffer.from(res.compile_output,'base64').toString():null,
+                stdout:res.stdout?Buffer.from(res.stdout,'base64').toString():null
+            };
 
-        for (const result of results) {
-            totalTime += parseFloat(result.time || 0);
-            maxMemory = Math.max(maxMemory, result.memory || 0);
+        });
+        let verdict=overallResults.every(res=>res.status=='Accepted')?'Accepted':overallResults.find(res=>res.status!='Accepted').status;
+        res.json({verdict,results:overallResults});
 
-            if (result.status_id !== 3) { // 3 is the ID for "Accepted".
-                finalVerdict = verdictMap[result.status_id] || "Error";
-                break; // Stop checking on the first failed test case.
-            }
-        }
+    }catch(err){
         
-        // 6. Save the submission result to your database.
-        await pool.query(
-            `INSERT INTO submissions (user_id, problem_id, language_id, source_code, sumitted_at, status, execution_time, execution_memory)
-             VALUES ($1, $2, $3, $4, NOW(), $5, $6, $7)`,
-            [user_id, problem_id, language_id, source_code, finalVerdict, totalTime / results.length, maxMemory]
-        );
-
-        // 7. Send the final verdict back to the client.
-        res.status(200).json({ verdict: finalVerdict, details: results });
-
-    } catch (error) {
-        console.error("Error during submission:", error.response ? error.response.data : error.message);
-        res.status(500).json({ error: 'An error occurred while processing your submission.' });
+        console.error('Server error while submitting:');
+        if(err.response){
+            console.error("Error data:",err.response.data);
+            console.error("Error status",err.response.status);
+        }else{
+            console.error(err.message);
+        }
+        res.status(500).json({error:'Server error'});
     }
+}
+
+// async function getStatus(req,res){
+//     const {token}=req.params;
+//     try{
+
+//         const response=await axios.get(`${url}/${token}?base64_encoded=true`);
+//         const status=response.data.status;
+//         const error=response.data.stderr?Buffer.from(response.data.stderr,'base64').toString():null;
+//         const compile_output=response.data.compile_output?Buffer.from(response.data.compile_output,'base64').toString():null;
+//         res.json({status,error,compile_output});
+//     }catch(err){
+//         console.error("Couldn't fetch submission status:",err.response?err.response:err.message);
+//         res.status(500).json({error:"Couldn't fetch submission status"});
+
+//     }
+
+
+// }
+
+module.exports={
+    newSub,
+    // getStatus
 };
-
-module.exports = { newSub };
-
