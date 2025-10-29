@@ -1,27 +1,30 @@
 import styles from "./Navbar.module.css"
 import DarkThemeIcon from "../Icons/darkThemeIcon"
-import { useAuth } from "../../context/AuthContext"; // 👈 Import useAuth
-
+import { useAuth } from "../../context/AuthContext"; 
+import { Link } from "react-router-dom"
 export default function Navbar(){
-    const { user } = useAuth(); // 👈 Get user from context
+    const { user } = useAuth(); 
 
     return (
         <div className={styles.navbar}>
             <div className={styles.leftNav}>
-                <div className={styles.logo}>
-                    <span className={styles.logoFragOne}>Bracket</span>
-                    <span className={styles.logoFragTwo}>Code</span>
-                </div>
+                <Link to="/">
+                    <div className={styles.logo}>
+                        <span className={styles.logoFragOne}>Bracket</span>
+                        <span className={styles.logoFragTwo}>Code</span>
+                    </div>
+                </Link>
             </div>
             <div className={styles.centerNav}>
             </div>
             <div className={styles.rightNav}>
-                <div className={styles.totalOnline}>158 online</div>
+                {user && (
+                <div>Battle</div>
+                )}
+                <div className={styles.totalOnline}>1 online</div>
                 <div className={styles.themeToggle}>
                     <DarkThemeIcon/>
                 </div>
-
-                {/* 👇 --- THIS IS THE DYNAMIC PART --- 👇 */}
                 {user && (
                     <div className={styles.profileButton}>
                         <div className={styles.avatar}></div>

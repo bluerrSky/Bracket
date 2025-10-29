@@ -20,9 +20,16 @@ export default function Hero(){
                 </div>
 
                 <div className={styles.ctaBtns}>
-                    <Link to="path"><button>Start Tutorial</button></Link>
 
-                    {/* 👇 3. Conditionally render the sign up button */}
+                    {!user && (
+                        <Link to="/login"><button>Start Tutorial</button></Link>
+                    )}
+                    {
+                    user && (
+                        <Link to="path"><button>Start Tutorial</button></Link>
+                        )
+                    }
+
                     {!user && (
                         <Link to="login"><button>Sign up</button></Link>
                     )}

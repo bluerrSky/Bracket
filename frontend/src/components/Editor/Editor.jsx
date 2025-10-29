@@ -47,6 +47,7 @@ export default function CodeEditor({ problemID }) {
             language_id: languageId,
             problem_id: problemID,
         };
+         console.log("Submitting data:", submissionData);
         mutation.mutate(submissionData);
     };
 

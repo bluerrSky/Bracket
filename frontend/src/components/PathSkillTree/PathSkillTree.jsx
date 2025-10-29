@@ -23,7 +23,7 @@ export default function PageSkillTree() {
 
             <div className={styles.skillMeter}>
                 <div className={styles.meterValue}>
-                    69%
+                    10%
                 </div>
             </div>
         </div>

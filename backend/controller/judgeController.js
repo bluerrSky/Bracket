@@ -47,6 +47,7 @@ const newSub = async (req, res) => {
     }
 
     const { source_code, language_id, problem_id } = req.body;
+    console.log("Received submission:", { source_code, language_id, problem_id });
     
     // In a real application, you would get the user_id from the authenticated session.
     // const user_id = req.user.id; 
@@ -70,7 +71,7 @@ const newSub = async (req, res) => {
             language_id,
             source_code,
             stdin: tc.input,
-            expected_output: tc.expected_output,
+            expected_output: tc.expected_output.trim(),
         }));
         
         // 3. Post the batch submission to Judge0.

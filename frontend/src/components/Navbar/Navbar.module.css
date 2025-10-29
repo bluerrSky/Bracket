@@ -9,6 +9,10 @@
     padding: 0.5rem 1rem;
 }
 
+a{
+    text-decoration: none;
+}
+
 .logo{
     font-size: var(--font-size-lg);
     display: flex;
