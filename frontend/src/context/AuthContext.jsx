@@ -1,6 +1,11 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Ensure it exists (good practice)
+if (!API_BASE_URL) {
+    console.error("VITE_API_BASE_URL is not defined! API calls will fail.");
+}
 // 1. Create the context
 // This is the object that components will subscribe to for auth changes.
 const AuthContext = createContext();
@@ -17,7 +22,7 @@ export function AuthProvider({ children }) {
         const checkLoggedIn = async () => {
             try {
                 // Make an API call to the backend endpoint that checks for an active session.
-                const { data } = await axios.get('http://localhost:8080/check-auth', {
+                const { data } = await axios.get(`${API_BASE_URL}/check-auth`, {
                     withCredentials: true, // Important: This sends the session cookie
                 });
 

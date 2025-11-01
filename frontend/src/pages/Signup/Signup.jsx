@@ -3,10 +3,15 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom"; // 👈 Import useNavigate
 import { useAuth } from "../../context/AuthContext"; // 👈 Import useAuth
 import styles from "./Signup.module.css";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Ensure it exists (good practice)
+if (!API_BASE_URL) {
+    console.error("VITE_API_BASE_URL is not defined! API calls will fail.");
+}
 const registerUser = async (userData) => {
     // ... your fetch logic remains the same
-    const response = await fetch("http://localhost:8080/signup", {
+    const response = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

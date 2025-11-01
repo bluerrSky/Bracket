@@ -3,7 +3,12 @@ import { useMutation } from '@tanstack/react-query';
 import styles from './Editor.module.css';
 import Editor from '@monaco-editor/react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Ensure it exists (good practice)
+if (!API_BASE_URL) {
+    console.error("VITE_API_BASE_URL is not defined! API calls will fail.");
+}
 
 // Function to calculate passed test cases
 const calculatePassedTestCases = (results) => {
@@ -100,7 +105,7 @@ const SubmissionResultPopup = ({ result, onClose }) => {
 
 // --- API call function for submission (no change here) ---
 const submitCode = async (submissionData) => {
-    const response = await fetch("http://localhost:8080/submit", {
+    const response = await fetch(`${API_BASE_URL}/submit`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

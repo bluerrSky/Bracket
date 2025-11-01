@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import RenderMarkdown from "../helper/markdownRenderer";
 import styles from "./ProblemStatement.module.css";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+// Ensure it exists (good practice)
+if (!API_BASE_URL) {
+    console.error("VITE_API_BASE_URL is not defined! API calls will fail.");
+}
 // --- API fetching function ---
 const fetchProblem = async (problemID) => {
-    const response = await fetch(`http://localhost:8080/problems/${problemID}`);
+    const response = await fetch(`${API_BASE_URL}/problems/${problemID}`);
     if (!response.ok) {
         throw new Error('Network response was not ok');
     }

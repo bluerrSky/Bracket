@@ -8,6 +8,12 @@ import styles from "./REPL.module.css";
 import { Mirage } from 'ldrs/react'
 import 'ldrs/react/Mirage.css'
 import RenderMarkdown from '../../components/helper/markdownRenderer';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+// Ensure it exists (good practice)
+if (!API_BASE_URL) {
+    console.error("VITE_API_BASE_URL is not defined! API calls will fail.");
+}
 const Loading = () => (
     <Mirage
         size="20" // Use a small size so it fits well in a button
@@ -19,7 +25,7 @@ const Loading = () => (
 
 // API call function to fetch the hint
 const fetchAIHint = async ({ problemId, userCode }) => {
-    const { data } = await axios.post('http://localhost:8080/get-hint',
+    const { data } = await axios.post(`${API_BASE_URL}/get-hint`,
         { problemId, userCode },
         { withCredentials: true }
     );
@@ -27,7 +33,7 @@ const fetchAIHint = async ({ problemId, userCode }) => {
 };
 
 const fetchAIResources = async ({ problemId }) => {
-    const { data } = await axios.post('http://localhost:8080/get-resources',
+    const { data } = await axios.post(`${API_BASE_URL}/get-resources`,
         { problemId },
         { withCredentials: true }
     );
