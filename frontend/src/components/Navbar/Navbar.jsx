@@ -2,8 +2,13 @@ import styles from "./Navbar.module.css"
 import DarkThemeIcon from "../Icons/darkThemeIcon"
 import { useAuth } from "../../context/AuthContext"; 
 import { Link } from "react-router-dom"
+// Import the new hook
+import useOnlineCounter from "../../hooks/useOnlineCounter"
+
 export default function Navbar(){
     const { user } = useAuth(); 
+    // Get the dynamic count from the hook
+    const onlineCount = useOnlineCounter();
 
     return (
         <div className={styles.navbar}>
@@ -21,7 +26,12 @@ export default function Navbar(){
                 {user && (
                 <div>Battle</div>
                 )}
-                <div className={styles.totalOnline}>1 online</div>
+                
+                {/* Use the dynamic onlineCount here */}
+                <div className={styles.totalOnline}>
+                    {onlineCount} online
+                </div>
+                
                 <div className={styles.themeToggle}>
                     <DarkThemeIcon/>
                 </div>

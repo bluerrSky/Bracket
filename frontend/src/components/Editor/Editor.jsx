@@ -39,7 +39,7 @@ const SubmissionResultPopup = ({ result, onClose }) => {
                 {result.results && (
                     <p className={styles.popupDetails}>
                         Total Test Cases Passed: 
-                        <span className={passedCases.startsWith("0") ? styles.fail : styles.pass}>
+                        <span className={passedCases !== result.results ? styles.fail : styles.pass}>
                              {passedCases}
                         </span>
                     </p>
