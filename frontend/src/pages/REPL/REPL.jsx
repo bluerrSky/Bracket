@@ -5,8 +5,6 @@ import axios from 'axios';
 import CodeEditor from "../../components/Editor/Editor";
 import ProblemStatement from "../../components/ProblemStatement/ProblemStatement";
 import styles from "./REPL.module.css";
-import { Mirage } from 'ldrs/react'
-import 'ldrs/react/Mirage.css'
 import RenderMarkdown from '../../components/helper/markdownRenderer';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
