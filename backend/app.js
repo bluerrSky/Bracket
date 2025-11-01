@@ -20,8 +20,8 @@ const io = new Server(server, {
         // The frontend makes the connection, so this is the 'origin'
         origin: [
             "http://localhost:5173", // Local Development URL
-            "https://your-vercel-frontend.vercel.app", // Vercel Production URL (REPLACE THIS!)
-            "https://your-render-backend.onrender.com" // If frontend talks to backend's domain
+            "https://bracket-gvlg10tk3-bluerrskys-projects.vercel.app", // Vercel Production URL (REPLACE THIS!)
+            "https://bracket-1.onrender.com" // If frontend talks to backend's domain
         ], 
         credentials: true,
         methods: ["GET", "POST"]
@@ -50,7 +50,7 @@ io.on('connection', (socket) => {
 app.use(cors({
     origin: [
         "http://localhost:5173",
-        "https://your-vercel-frontend.vercel.app", // REPLACE THIS!
+        "https://bracket-gvlg10tk3-bluerrskys-projects.vercel.app", // REPLACE THIS!
     ],
     credentials: true, // Allow sending/receiving cookies across domains
 }));
