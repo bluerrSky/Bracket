@@ -13,7 +13,7 @@ const IS_PROD = app.get('env') === 'production';
 
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://bracket.vercel.app'], 
+    origin: ['http://localhost:5173', "https://bracket-eight.vercel.app"], 
     credentials: true
 }));
 
