@@ -9,6 +9,7 @@ import PathPage from './pages/PathPage/PathPage.jsx'
 import REPL from './pages/REPL/REPL.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext'; // 👈 Import AuthProvider
+import Test from './pages/Test.jsx'
 
 const queryClient = new QueryClient();
 const router = createBrowserRouter([
@@ -29,14 +30,19 @@ const router = createBrowserRouter([
               {
                 path: "/page/:pageName/:problemID",
                 element: <REPL/>
-              }
+              },
+ 
 
         ]
     },
       {
       path: "login",
       element: <SignUp/>
-  },
+      },
+        {
+        path: "test",
+        element: <Test/>
+      }
 
 ]);
 

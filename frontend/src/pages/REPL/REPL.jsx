@@ -5,6 +5,17 @@ import axios from 'axios';
 import CodeEditor from "../../components/Editor/Editor";
 import ProblemStatement from "../../components/ProblemStatement/ProblemStatement";
 import styles from "./REPL.module.css";
+import { Mirage } from 'ldrs/react'
+import 'ldrs/react/Mirage.css'
+import RenderMarkdown from '../../components/helper/markdownRenderer';
+const Loading = () => (
+    <Mirage
+        size="20" // Use a small size so it fits well in a button
+        speed="2.5"
+        color="white" // Use a color that contrasts with your button
+    />
+);
+
 
 // API call function to fetch the hint
 const fetchAIHint = async ({ problemId, userCode }) => {
@@ -51,7 +62,7 @@ export default function REPL() {
             console.error("Failed to fetch resources:", error);
         },
     });
-
+  console.log("hintLoading", hintMutation.status, "resourcesLoading", resourcesMutation.status);
     const handleGetHint = () => {
         setHint(""); // Clear any previous hint before making a new request
         hintMutation.mutate({ problemId: problemID, userCode });
@@ -72,13 +83,13 @@ export default function REPL() {
 
                 {/* --- HINT BUTTON AND DISPLAY AREA --- */}
                 <div className={styles.hintContainer}>
-                    <button onClick={handleGetHint} disabled={hintMutation.isLoading}>
-                        {hintMutation.isLoading ? 'Thinking...' : 'Get a Hint 💡'}
+                 <button onClick={handleGetHint} disabled={hintMutation.isLoading}>
+                        {hintMutation.isPending ? "Getting a hint...": 'Get a Hint 💡'}
                     </button>
 
                     {/* This JSX conditionally renders the hint */}
                     {hintMutation.isSuccess && (
-                        <p className={styles.hintText}>{hint}</p>
+                        <RenderMarkdown content={hint}/>
                     )}
                     {hintMutation.isError && (
                         <p className={styles.hintError}>{hint}</p>
@@ -86,7 +97,7 @@ export default function REPL() {
                 </div>
                 <div className={styles.resourcesContainer}>
                     <button onClick={handleGetResources} disabled={resourcesMutation.isLoading}>
-                        {resourcesMutation.isLoading ? 'Searching...' : 'Suggest Resources 📚'}
+                        {resourcesMutation.isPending ? "Suggesting..." : 'Suggest Resources 📚'}
                     </button>
                     
                     {resourcesMutation.isSuccess && (

@@ -75,7 +75,7 @@ const getAIHint = async (req, res) => {
         }
         const problem = problemResult.rows[0];
 
-        const prompt = `
+const prompt = `
             You are an expert programming tutor for a competitive programming platform.
             A user is stuck on the following problem and needs a hint.
 
@@ -88,11 +88,15 @@ const getAIHint = async (req, res) => {
             \`\`\`
 
             Your task is to provide a single, short, conceptual hint.
-            - DO NOT give away the final answer or write any code.
+            - **The entire hint must be generated using Markdown formatting** so it can be rendered by React Markdown.
+            - Use standard Markdown (e.g., \`code\`, **bold**). Use GitHub-flavored Markdown for code blocks (e.g., \`\`\`cpp\`).
+            - Use LaTeX enclosed in **single dollar signs ($...$)** for inline math and **double dollar signs ($$...$$)** for block math.
+            - DO NOT give away the final answer or write any complete code blocks.
             - DO NOT point out specific syntax errors.
             - Guide them toward the correct algorithm or data structure.
             - Suggest an edge case they might be missing.
             - Keep the hint to one or two sentences.
+            
         `;
 
         // Use the stable alias for the latest Flash model

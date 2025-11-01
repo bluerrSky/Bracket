@@ -63,14 +63,18 @@ async function newSub(req,res){
             return res.status(500).json({error:'Submission time out!'});
         }
 
-        const overallResults=results.map(res=>{
+        const overallResults=results.map((res, index)=>{ // <-- IMPORTANT: Add 'index' here
+            const testCase = testCases[index];
             return {
                 status:res.status.description,
                 time:res.time,
                 memory:res.memory,
                 error:res.stderr?Buffer.from(res.stderr,'base64').toString():null,
                 compile_output:res.compile_output?Buffer.from(res.compile_output,'base64').toString():null,
-                stdout:res.stdout?Buffer.from(res.stdout,'base64').toString():null
+                stdout:res.stdout?Buffer.from(res.stdout,'base64').toString():null,
+
+                input: Buffer.from(testCase.input).toString(), // Base64 decode input before sending
+                expected_output: Buffer.from(testCase.expected_output).toString() // Decode expected output
             };
 
         });
