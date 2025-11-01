@@ -117,7 +117,7 @@ export default function SignUp() {
                         {mutation.isError && <p className={styles.error}>{mutation.error.message}</p>}
                         {mutation.isSuccess && <p className={styles.success}>{mutation.data.message}</p>}
                         
-                        <button type="submit" disabled={mutation.isLoading}>
+                        <button type="submit" disabled={mutation.isPending}>
                             {mutation.isPending ? "Creating..." : "Create account"}
                         </button>
                     </form>

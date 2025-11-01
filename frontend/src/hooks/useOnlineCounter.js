@@ -18,9 +18,13 @@ const useOnlineCounter = () => {
             return;
         }
 
-        // 1. Establish the connection to your backend
+// --- THE NECESSARY FIX ---
         const socket = io(API_BASE_URL, {
-            // Note: If you use cookies/sessions, you might need to configure credentials: true here
+            // Force the client to use the WebSocket protocol first.
+            // This bypasses issues caused by proxies/load balancers in hosted environments.
+            transports: ['websocket'], 
+            // Keep credentials true if you rely on sessions/cookies (you do for auth)
+            credentials: true,
         });
 
         // 2. Listen for the update event from the server

@@ -9,37 +9,50 @@ import PathPage from './pages/PathPage/PathPage.jsx'
 import REPL from './pages/REPL/REPL.jsx'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './context/AuthContext'; // 👈 Import AuthProvider
-
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute.jsx'
 const queryClient = new QueryClient();
+// main.jsx (Modified Router Configuration
+
 const router = createBrowserRouter([
-    // ... your router config remains the same
     {
         path: "/",
-        element: <App/>,
+        element: <App/>, // App is the main layout for ALL routes starting at '/'
         children:[
+            // The root path ("/") renders the Hero/Cards logic inside App.jsx
 
-              {
-                  path: "path",
-                  element: <ChoosePath/>
-              },
-              {
-                path: "/page/:pageName",
-                element: <PathPage/>
-              },
-              {
-                path: "/page/:pageName/:problemID",
-                element: <REPL/>
-              },
+            // --- PROTECTED ROUTES GROUP ---
+            {
+                element: <ProtectedRoute />, // All children of this element are protected
+                children: [
+                    // Path is now relative to the parent ('/')
+                    {
+                        path: "path", // Matches /path
+                        element: <ChoosePath/>
+                    },
+                    {
+                        path: "page/:pageName", // Matches /page/dp
+                        element: <PathPage/>
+                    },
+                    {
+                        path: "page/:pageName/:problemID", // Matches /page/dp/1
+                        element: <REPL/>
+                    },
+                ]
+            },
  
 
         ]
     },
-      {
+    // Public Route: Login is a standalone route without the App layout
+    {
       path: "login",
       element: <SignUp/>
-      },
+    },
 
 ]);
+
+// ... (rest of the createRoot call remains the same)
+
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
