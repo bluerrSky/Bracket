@@ -1,0 +1,103 @@
+/* components/PathDashboard/PathDashboard.module.css */
+.pathContainer {
+    color: #fff;
+    width: 100%;
+    background: rgba(44, 44, 68, 0.8);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    padding: 2rem;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #444;
+    padding-bottom: 1rem;
+}
+.header h2 {
+    color: #e0e0e0;
+    margin: 0;
+}
+.regenButton {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: white;
+    background-color: #5a67d8;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.regenButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+.problemList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.problemItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: #2c2c44;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+.problemInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+.difficulty {
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    text-transform: uppercase;
+    color: #fff;
+}
+.easy { background-color: #28a745; }
+.medium { background-color: #ffc107; color: #333; }
+.hard { background-color: #dc3545; }
+.title {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+.categoryLink {
+    font-size: 0.9rem;
+    color: #aaa;
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    background: #3a3a5a;
+    border-radius: 5px;
+}
+.categoryLink:hover {
+    background: #4a4a6a;
+    color: #fff;
+}
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.status {
+    font-size: 0.9rem;
+    color: #ccc;
+    font-style: italic;
+}
+.recommended { color: #4a90e2; }
+.completed { color: #28a745; }
+.skipped { color: #aaa; }
+.solveButton {
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+}

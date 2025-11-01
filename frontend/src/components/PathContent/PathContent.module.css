@@ -80,3 +80,10 @@
   font-size: 0.9rem;
 }
  */
+/* ADD THIS to components/PathContent/PathContent.module.css */
+
+.divider {
+    border: none;
+    border-top: 1px solid #444;
+    margin: 3rem 0;
+}

@@ -1,11 +1,11 @@
 import styles from "./Hero.module.css"
 import { Link } from "react-router-dom"
-import HeroImg from "../../assets/images/heroImg.jpg"
-import HeroImg2 from "../../assets/images/heroImg2.png"
-import { useAuth } from "../../context/AuthContext"; // 👈 1. Import useAuth
+// import HeroImg from "../../assets/images/heroImg.jpg"
+// import HeroImg2 from "../../assets/images/heroImg2.png"
+import { useAuth } from "../../context/AuthContext"; //
 
 export default function Hero(){
-    const { user } = useAuth(); // 👈 2. Get the user state
+    const { user } = useAuth(); //
 
     return (
         <div className={styles.Hero}>
@@ -21,18 +21,28 @@ export default function Hero(){
 
                 <div className={styles.ctaBtns}>
 
+                    {/* This is your original logged-out logic (unchanged) */}
                     {!user && (
                         <Link to="/login"><button>Start Tutorial</button></Link>
                     )}
-                    {
-                    user && (
+                    
+                    {/* This is your original logged-in logic (unchanged) */}
+                    {user && (
                         <Link to="path"><button>Start Tutorial</button></Link>
-                        )
-                    }
+                    )}
 
+                    {/* This is your original logged-out logic (unchanged) */}
                     {!user && (
                         <Link to="login"><button>Sign up</button></Link>
                     )}
+
+                    {/* --- THIS IS THE NEW BUTTON (Only shows if logged in) --- */}
+                    {user && (
+                        <Link to="my-path">
+                            <button className={styles.btnSecondary}>My Adaptive Path</button>
+                        </Link>
+                    )}
+                    {/* ---------------------------------------------------- */}
                 </div>
 
             </div>

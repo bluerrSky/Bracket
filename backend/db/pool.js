@@ -1,30 +1,32 @@
-// pool.js (Modified)
-require('dotenv').config({path:require('path').resolve(__dirname,'../.env')});
-const {Pool}=require('pg');
+// db/pool.js
+// DO NOT load dotenv here. app.js does it.
+const { Pool } = require('pg');
 
-
-// Best practice: Check for DATABASE_URL first (used by Render, Heroku, etc.)
-// If DATABASE_URL is set (in production), use that.
-// If not (in development), fallback to individual variables.
-
+// This logic automatically switches between production and local
 const connectionConfig = process.env.DATABASE_URL 
     ? {
+        // Production (Render/Heroku)
         connectionString: process.env.DATABASE_URL,
         ssl: {
-            // Render often requires SSL rejection to be disabled for the connection to work
-            rejectUnauthorized: false,
+            rejectUnauthorized: false, // Required for most cloud databases
         },
       }
     : {
-        host:process.env.DB_HOST,
-        user:process.env.DB_USER,
-        database:process.env.DB_DATABASE,
-        password:process.env.DB_PASSWORD,
-        port:parseInt(process.env.DB_PORT,10)
+        // Local
+        host: process.env.DB_HOST,
+        user: 'dummy',
+        database: 'project',
+        password: 'pass',
+        port: parseInt(process.env.DB_PORT, 10)
+        // Add SSL here if your local psql test requires it
+        // ssl: { rejectUnauthorized: false }
     };
 
+const pool = new Pool(connectionConfig);
 
-module.exports=new Pool(connectionConfig);
+// Add a global error listener for safety
+pool.on('error', (err, client) => {
+    console.error('Unexpected error on idle database client', err);
+});
 
-// NOTE: You must also ensure your local .env file is updated to use DATABASE_URL,
-// or keep your local .env as-is if you prefer the fallback structure.
+module.exports = pool;

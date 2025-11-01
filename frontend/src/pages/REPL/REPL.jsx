@@ -49,11 +49,9 @@ export default function REPL() {
     const hintMutation = useMutation({
         mutationFn: fetchAIHint,
         onSuccess: (data) => {
-            // ✅ INSTEAD of console.log, we now SET THE STATE
             setHint(data.hint);
         },
         onError: (error) => {
-            // Also set state on error to display a message
             setHint(error.response?.data?.message || "Could not get a hint right now.");
         },
     });
@@ -64,18 +62,17 @@ export default function REPL() {
             setResources(data.resources);
         },
         onError: (error) => {
-            // Handle error, maybe set a message
             console.error("Failed to fetch resources:", error);
         },
     });
-  console.log("hintLoading", hintMutation.status, "resourcesLoading", resourcesMutation.status);
+
     const handleGetHint = () => {
-        setHint(""); // Clear any previous hint before making a new request
+        setHint(""); 
         hintMutation.mutate({ problemId: problemID, userCode });
     };
 
     const handleGetResources = () => {
-        setResources([]); // Clear old resources
+        setResources([]); 
         resourcesMutation.mutate({ problemId: problemID });
     };
 
@@ -89,11 +86,10 @@ export default function REPL() {
 
                 {/* --- HINT BUTTON AND DISPLAY AREA --- */}
                 <div className={styles.hintContainer}>
-                 <button onClick={handleGetHint} disabled={hintMutation.isLoading}>
+                 <button onClick={handleGetHint} disabled={hintMutation.isPending}>
                         {hintMutation.isPending ? "Getting a hint...": 'Get a Hint 💡'}
                     </button>
 
-                    {/* This JSX conditionally renders the hint */}
                     {hintMutation.isSuccess && (
                         <RenderMarkdown content={hint}/>
                     )}
@@ -101,23 +97,38 @@ export default function REPL() {
                         <p className={styles.hintError}>{hint}</p>
                     )}
                 </div>
+
+                {/* --- RESOURCES BUTTON AND DISPLAY AREA --- */}
                 <div className={styles.resourcesContainer}>
-                    <button onClick={handleGetResources} disabled={resourcesMutation.isLoading}>
+                    <button onClick={handleGetResources} disabled={resourcesMutation.isPending}>
                         {resourcesMutation.isPending ? "Suggesting..." : 'Suggest Resources 📚'}
                     </button>
                     
                     {resourcesMutation.isSuccess && (
                         <div className={styles.resourcesList}>
-                            <h4>Here are some helpful resources:</h4>
+                            <h4>Here are some helpful concepts:</h4>
                             <ul>
-                                {resources.map((resource, index) => (
-                                    <li key={index}>
-                                        <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                            {resource.title}
-                                        </a>
-                                        <p>{resource.description}</p>
-                                    </li>
-                                ))}
+                                {/* --- THIS IS THE FIX --- */}
+                                {resources.map((resource) => {
+                                    // 1. Create a URL-safe search query
+                                    const searchQuery = encodeURIComponent(`${resource.concept} tutorial`);
+                                    
+                                    // 2. Create the Google search URL
+                                    const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
+
+                                    return (
+                                        // 3. Use the new "concept" as the key
+                                        <li key={resource.concept}>
+                                            {/* 4. Link to Google search instead of a fake URL */}
+                                            <a href={googleSearchUrl} target="_blank" rel="noopener noreferrer">
+                                                <strong>Learn about: {resource.concept}</strong>
+                                            </a>
+                                            {/* 5. Render the description (this was already correct) */}
+                                            <p>{resource.description}</p>
+                                        </li>
+                                    );
+                                })}
+                                {/* --- END OF FIX --- */}
                             </ul>
                         </div>
                     )}
