@@ -6,6 +6,8 @@ const {
     logAuth,
     signAuth,
     checkAuth,
+    validateLogin,
+    validateSignup,
     getProblemById,
     getProblemsByCat,
     getAIHint,
@@ -20,8 +22,8 @@ const {
 
 // Auth
 router.get('/', getInd);
-router.post('/signup', signAuth);
-router.post('/login', logAuth);
+router.post('/signup', validateSignup,signAuth);
+router.post('/login',validateLogin, logAuth);
 router.get('/check-auth', checkAuth);
 
 // Problems & AI Help
