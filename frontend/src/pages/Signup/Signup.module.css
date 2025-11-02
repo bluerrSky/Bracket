@@ -1,0 +1,98 @@
+
+.mainContainer{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(38	77	155);
+}
+
+.signContainer{
+    --container-padding: 0.5rem;
+    --max-width-signCont: 420px;
+    --child-min-width: calc(var(--max-width-signCont) - calc(2 * var(--container-padding)));
+    background-color: lightgrey;
+    width: max(var(--max-width-signCont),60%);
+    min-height: 500px;
+    border-radius: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: var(--container-padding);
+    background-color: rgb(32	62	126);
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.left{
+    min-width: var(--child-min-width);
+    min-height: 300px;
+    flex: 1;
+    background: url(../../assets/images/signup.png);
+    background-position: center;
+    border-radius: 18px;
+box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.right{
+    min-width: var(--child-min-width);
+    flex: 1;
+    color: white;
+    padding: 2rem 1rem 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.formHeader{
+
+    font-size: 3.5rem;
+    font-family: var(--ff-pageHeader);
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+}
+input{
+    padding: 0.6rem;
+    font-size: 1.2rem;
+    /* opacity: 0.8; */
+    background-color: rgb(38	77	155);
+    border: 0;
+    color: white;
+    border-radius: 12px;
+    font-family: var(--ff-heading);
+}
+
+button{
+    padding: 0.6rem;
+    font-family: var(--ff-heading);
+    font-size: 1.2rem;
+    background-color: white;
+    color: black;
+    border: 0;
+}
+
+
+/* Add to Signup.module.css */
+.toggleMode {
+    color: white;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    /* text-decoration: underline; */
+    font-family: var(--ff-heading);
+}
+
+.toggleMode:hover {
+    color: rgb(255	140	58);
+}
+
+
+.error{
+    color: rgb(255, 94, 58);
+    font-family: var(--ff-heading);
+}

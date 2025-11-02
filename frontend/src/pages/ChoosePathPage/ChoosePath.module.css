@@ -1,0 +1,24 @@
+.pageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column; 
+  height: 100vh;
+  background: url(../../assets/images/background4.png) no-repeat center / cover;
+  overflow: hidden;
+}
+
+.title {
+  font-size: 6rem;
+  position: absolute;
+  width: 100vw;
+  height: 300px;
+  text-align: center;
+  top: 22%;
+  color: white;
+  font-family: jersey;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  transform: translateY(-50%);
+}

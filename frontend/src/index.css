@@ -1,0 +1,52 @@
+@font-face {
+    font-family: upHeavel;
+    src: url(./assets/fonts/UpheavalPro.ttf);
+}
+
+@font-face {
+    font-family: painterVision;
+    src: url(./assets/fonts/Windows\ Regular.ttf);
+}
+
+@font-face {
+    font-family: jersey;
+    src: url(./assets/fonts/Jersey25-Regular.ttf);
+}
+
+@font-face {
+    font-family: Inter;
+    src: url(./assets/fonts/InterVariable.ttf);
+}
+
+*, *::after, *::before{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root{
+    --ff-pageHeader: upHeavel;
+    --ff-heading: painterVision;
+    --ff-content: jersey;
+    --ff-pageContent: Inter;
+    --font-size-sm:   clamp(0.8rem, 0.17vw + 0.75rem, 0.94rem);
+    --font-size-base: clamp(1rem, 0.34vw + 0.6rem, 1.25rem);
+    --font-size-md:   clamp(1.3rem, 0.7vw + 0.8rem, 1.8rem);
+    --font-size-lg:   clamp(1.5rem, 1vw + 1rem, 2rem);
+    --font-size-xl:   clamp(1.95rem, 1.56vw + 1.56rem, 2.96rem);
+    --font-size-xxl:  clamp(2.44rem, 2.38vw + 1.8rem, 4rem);
+    --font-size-xxxl:  clamp(4.44rem, 5.38vw + 2.8rem, 8rem);
+
+
+    --clr-primary: rgb(6	11	33);
+    --clr-secondary: rgb(247	234	195);
+    --clr-side-kick: rgb(241	125	91);
+    --clr-accent-1: rgb(255	230	151);
+
+
+    --border-rad: 24px;
+}
+body{
+    height: 100vh;
+    width: 100vw;
+}
