@@ -1,0 +1,18 @@
+/* pages/AdaptivePathPage/AdaptivePathPage.module.css */
+.container {
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #1a1a2e;
+    border-radius: 8px;
+    color: white;
+    /* This page should be below the navbar, not centered */
+    min-height: 80vh; 
+}
+.loading, .error {
+    color: white;
+    font-size: 1.2rem;
+    text-align: center;
+    padding: 3rem;
+}

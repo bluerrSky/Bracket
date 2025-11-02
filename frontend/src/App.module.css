@@ -1,0 +1,16 @@
+.mainContainer{
+    background-color: var(--clr-primary);
+    display: flex;
+    flex-direction: column;
+    overflow-x:hidden;
+}
+
+.homeSection{
+    height: 100vh;
+    background: url(https://images.alphacoders.com/113/thumb-1920-1138740.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+}

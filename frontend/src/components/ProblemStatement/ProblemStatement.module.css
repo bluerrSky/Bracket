@@ -1,0 +1,14 @@
+.probStatementContainer{
+    width: 100%;
+    height: 100%;
+    /* background-color: grey; */
+    border: 4px solid grey;
+}
+.probTitle{
+    color: white;
+    font-size: 3rem;
+    text-align: center;
+    font-family: var(--ff-heading);
+    margin: 2rem 0;
+    
+}

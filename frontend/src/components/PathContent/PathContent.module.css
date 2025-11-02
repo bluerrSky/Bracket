@@ -1,0 +1,82 @@
+.pathContentContainer{
+    /* border: 2px solid darkgoldenrod; */
+    flex: 1;
+    /* height: 300vh; */
+    color: white;
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+    padding: 0 5rem;
+}
+.pathContentContainer > *{
+    /* border: 1px solid green; */
+    z-index: 1;
+}
+/* .pathContentContainer::before{
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: black;
+    opacity: 0.5;
+    z-index: 0;
+    box-shadow: 0 0 50px 60px rgba(0, 0, 0, 1);
+} */
+.pathTitle{
+    z-index: 1;
+    font-size: calc(var(--font-size-xxl) + 1rem);
+    font-family: var(--ff-heading);
+    /* text-align: center; */
+    text-shadow: 0 0 0.15em #fff;
+}
+.contentSections{
+    width: 100ch;
+    /* margin-left: max(100px, 12%); */
+}
+
+.sectionTitle{
+    font-size: var(--font-size-lg);
+    font-family: var(--ff-heading);
+}
+
+.tutorial-content{
+    margin-top: 1rem;
+    color: #e5e5e5;
+    font-family: var(--ff-pageContent);
+    line-height: 1.5;
+    font-size: calc(var(--font-size-base) + 3px);
+}
+
+/* .tutorial-content {
+  color: #e5e5e5;
+  line-height: 1.6;
+  padding: 2rem;
+  font-size: 1rem;
+}
+
+.tutorial-content h1, 
+.tutorial-content h2 {
+  font-family: 'Press Start 2P', monospace; 
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.tutorial-content code {
+  background: #111;
+  color: #00ffcc;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+}
+
+.tutorial-content pre {
+  background: #151515;
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+ */

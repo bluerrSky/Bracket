@@ -1,0 +1,95 @@
+/* components/FeedbackForm/FeedbackForm.module.css */
+.feedbackContainer {
+    padding: 2rem;
+    background: #2c2c44;
+    border-radius: 8px;
+    margin-top: 1rem;
+    color: #e0e0e0;
+}
+.feedbackContainer h4 {
+    font-size: 1.3rem;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+.stars {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+.starOn {
+    color: #f7b731;
+    cursor: pointer;
+}
+.starOff {
+    color: #555;
+    cursor: pointer;
+}
+.subtopicSelect {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+.subtopicSelect label {
+    font-size: 1rem;
+    color: #ccc;
+}
+.subtopicSelect select {
+    padding: 0.8rem;
+    font-size: 1rem;
+    background: #1a1a2e;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 6px;
+}
+.submitButton {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.submitButton:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+.remediationBox {
+    animation: fadeIn 0.5s ease-in;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.explanation {
+    background: #1a1a2e;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #4a90e2;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+.problemList {
+    list-style: none;
+    padding-left: 0;
+}
+.problemList li {
+    background: #1a1a2e;
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+.problemList a {
+    color: #87bfff;
+    text-decoration: none;
+}
+.problemList a:hover {
+    text-decoration: underline;
+}
