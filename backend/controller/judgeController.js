@@ -2,10 +2,8 @@ const axios = require('axios');
 const url = process.env.JUDGE0_URL;
 const pool = require('../db/pool');
 
-// --- HELPER 1: User Topic Mastery (Your existing function - no changes) ---
+// --- HELPER 1: User Topic Mastery ---
 async function updateUserMastery(client, userId, problemId, verdict) {
-    // ... (Your existing code is perfect here, just add 'client' as a parameter)
-    // IMPORTANT: Replace all `pool.query` inside this function with `client.query`
     try {
         const probRes = await client.query(`SELECT category FROM problems WHERE problem_id = $1`, [problemId]);
         if (probRes.rows.length === 0) return;
@@ -38,7 +36,7 @@ async function updateUserMastery(client, userId, problemId, verdict) {
     }
 }
 
-// --- HELPER 2: Log the Submission (New) ---
+// --- HELPER 2: Log the Submission ---
 async function logSubmission(client, { userId, problem_id, language_id, source_code, verdict, token }) {
     try {
         const sql = `
@@ -52,7 +50,7 @@ async function logSubmission(client, { userId, problem_id, language_id, source_c
     }
 }
 
-// --- HELPER 3: Update User Problem Status (New) ---
+// --- HELPER 3: Update User Problem Status ---
 async function updateUserProblemStatus(client, userId, problemId, verdict) {
     try {
         const isSolved = verdict === 'Accepted';
@@ -64,7 +62,6 @@ async function updateUserProblemStatus(client, userId, problemId, verdict) {
                 attempted = TRUE,
                 solved = user_problem.solved OR $3;
         `;
-        // `solved OR $3` ensures that once a problem is solved, it stays solved.
         await client.query(sql, [userId, problemId, isSolved]);
     } catch (err) {
         console.error('Error updating user_problem status:', err.message);
@@ -72,7 +69,7 @@ async function updateUserProblemStatus(client, userId, problemId, verdict) {
     }
 }
 
-// --- HELPER 4: Update Learning Path (New) ---
+// --- HELPER 4: Update Learning Path ---
 async function updateLearningPathStatus(client, userId, problemId, verdict) {
     try {
         if (verdict === 'Accepted') {
@@ -90,7 +87,11 @@ async function updateLearningPathStatus(client, userId, problemId, verdict) {
 }
 
 
-const headers = { /* ... your existing headers ... */ };
+const headers = {
+    'content-type': 'application/json',
+    'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+    'X-RapidAPI-Host': process.env.RAPIDAPI_HOST
+};
 const maxPollingTime = 60000;
 const interval = 2000;
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -107,47 +108,88 @@ async function newSub(req, res) {
     }
     const sc = Buffer.from(source_code).toString('base64');
     
-    let client; // Define client here to use in the finally block
+    let client;
 
     try {
-        // --- All your existing logic to get test cases, limits, and poll Judge0 ---
-        // ... (no changes needed in this section) ...
-        const testCases = await pool.query(`select input,expected_output from test_cases where problem_id=$1`, [problem_id]);
-        // ...
+        const testCasesRes = await pool.query(`select input,expected_output from test_cases where problem_id=$1`, [problem_id]);
+        const testCases = testCasesRes.rows;
+        
+        const limitsRes = await pool.query(`select time_limit,memory_limit from problems where problem_id=$1`, [problem_id]);
+        const { time_limit, memory_limit } = limitsRes.rows[0];
+
+        if (!testCases.length || !time_limit || !memory_limit) {
+            return res.status(404).json({ error: 'Problem or test cases not found' });
+        }
+        
+        // --- THIS WAS THE MISSING BLOCK OF CODE ---
+        const submissions = testCases.map(tc => {
+            return {
+                source_code: sc,
+                language_id,
+                stdin: Buffer.from(tc.input).toString('base64'),
+                expected_output: Buffer.from(tc.expected_output).toString('base64'),
+                cpu_time_limit: time_limit,
+                memory_limit: memory_limit
+            }
+        });
+        // --- END OF FIX ---
+        
         const response = await axios.post(`${url}/submissions/batch?base64_encoded=true&wait=false`, { submissions }, { headers });
         let tokens = response.data.map(x => x.token);
-        // ... (your while loop for polling) ...
+        tokens = tokens.join(',');
+
+        let time = 0;
+        let finished = false;
+        let results;
+        while (time < maxPollingTime) {
+            const pollResponse = await axios.get(`${url}/submissions/batch?tokens=${tokens}&base64_encoded=true&fields=*`, { headers });
+            results = pollResponse.data.submissions;
+
+            finished = results.every(res => res.status.id > 2);
+            if (finished) {
+                break;
+            }
+            await sleep(interval);
+            time += interval;
+        }
         
-        if (!finished) { /* ... handle timeout ... */ }
+        if (!finished) {
+            console.error('Polling timed out');
+            return res.status(500).json({ error: 'Submission time out!' });
+        }
+
+        const overallResults = results.map((res, index) => {
+            const testCase = testCases[index];
+            return {
+                status: res.status.description,
+                time: res.time,
+                memory: res.memory,
+                error: res.stderr ? Buffer.from(res.stderr, 'base64').toString() : null,
+                compile_output: res.compile_output ? Buffer.from(res.compile_output, 'base64').toString() : null,
+                stdout: res.stdout ? Buffer.from(res.stdout, 'base64').toString() : null,
+                input: (testCase.input).toString(),
+                expected_output: (testCase.expected_output).toString()
+            };
+        });
         
-        const overallResults = results.map(/* ... your mapping logic ... */);
         const verdict = overallResults.every(res => res.status == 'Accepted') ? 'Accepted' : overallResults.find(res => res.status != 'Accepted').status;
         
-        // --- DATABASE TRANSACTION ---
-        // Use a transaction to ensure all updates succeed or none do.
         client = await pool.connect();
         try {
             await client.query('BEGIN');
-
-            // --- CALL ALL HELPERS ---
             await updateUserMastery(client, userId, problem_id, verdict);
             await logSubmission(client, { userId, problem_id, language_id, source_code, verdict, token: tokens.split(',')[0] });
             await updateUserProblemStatus(client, userId, problem_id, verdict);
             await updateLearningPathStatus(client, userId, problem_id, verdict);
-            
             await client.query('COMMIT');
             console.log(`[Submission Success] All DB updates for user ${userId} on problem ${problem_id} committed.`);
-
         } catch (dbErr) {
             await client.query('ROLLBACK');
             console.error('[Submission DB Error] Transaction rolled back.', dbErr.message);
-            // We still want to send results to the user, but we log the internal error.
-            // You might want to return a specific error to the user here instead.
         } finally {
             client.release();
         }
-        // --- END TRANSACTION ---
-
+        
         res.json({ verdict, results: overallResults });
 
     } catch (err) {
