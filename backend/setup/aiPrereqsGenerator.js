@@ -1,5 +1,5 @@
-const pool = require('../db/pool');
 require('dotenv').config();
+const pool = require('../db/pool');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const AImodel=process.env.AI_MODEL;
 

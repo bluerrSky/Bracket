@@ -1,4 +1,4 @@
-
+require('dotenv').config();
 const pool = require('../db/pool');
 
 const sql = `

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const pool = require('../db/pool');
 const { problems } = require('./problemsdb/graphs_problems');
 const { test_cases } = require('./problemsdb/graphs_test_cases');
