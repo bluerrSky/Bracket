@@ -1,6 +1,8 @@
 const pool = require('../db/pool');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+require('dotenv').config();  
 const AImodel=process.env.AI_MODEL;
+
 async function main() {
     let client;
     let genAI;
@@ -10,13 +12,13 @@ async function main() {
         
         console.log('--- Connected to DB. Fetching topics... ---');
         // We get topics from the tutorials you just created
-        const topicsRes = await pool.query(`SELECT topic_name FROM tutorials`);
+        const topicsRes = await pool.query(`SELECT topic_name FROM tutorials;`);
         const allTopics = topicsRes.rows.map(r => r.topic_name);
         
         if (allTopics.length === 0) {
             throw new Error("Your 'tutorials' table is empty. Please run 'populate_tutorials.js' first.");
         }
-        console.log('--- Found Topics:', allTopics, '---');
+        
         
         const prompt = `
             You are an expert Computer Science curriculum designer.
@@ -40,6 +42,7 @@ async function main() {
         `;
 
         console.log('--- Asking AI to generate prerequisite map... ---');
+        
         const model = genAI.getGenerativeModel({ model: AImodel });
         const result = await model.generateContent(prompt);
         const response = await result.response;

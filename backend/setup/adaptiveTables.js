@@ -1,14 +1,14 @@
 const pool = require('../db/pool');
 
 const sql = `
-    drop table if exists topic_prerequisites;
+    drop table if exists topic_prerequisites cascade;
     CREATE TABLE IF NOT EXISTS topic_prerequisites (
         topic_id VARCHAR(20) NOT NULL,
         prerequisite_id VARCHAR(20) NOT NULL,
         PRIMARY KEY (topic_id, prerequisite_id)
     );
     
-    drop table if exists user_topic_mastery;
+    drop table if exists user_topic_mastery cascade;
     CREATE TABLE IF NOT EXISTS user_topic_mastery (
         user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
         topic_name VARCHAR(20) NOT NULL,
@@ -18,7 +18,7 @@ const sql = `
         PRIMARY KEY (user_id, topic_name)
     );
     
-    drop table if exists user_learning_path;
+    drop table if exists user_learning_path cascade;
     CREATE TABLE IF NOT EXISTS user_learning_path (
         path_id SERIAL PRIMARY KEY,
         user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
@@ -27,7 +27,7 @@ const sql = `
         order_index INT NOT NULL
     );
     
-    drop table if exists tutorials;
+    drop table if exists tutorials cascade;
     CREATE TABLE IF NOT EXISTS tutorials (
         topic_name VARCHAR(20) PRIMARY KEY,
         title VARCHAR(200) NOT NULL,
@@ -35,7 +35,7 @@ const sql = `
         subtopics JSONB 
     );
     
-    drop table if exists user_tutorial_progress;
+    drop table if exists user_tutorial_progress cascade;
     CREATE TABLE IF NOT EXISTS user_tutorial_progress (
         user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
         topic_name VARCHAR(20) REFERENCES tutorials(topic_name) ON DELETE CASCADE,
