@@ -8,9 +8,10 @@ const {
     
 } = require('../controller/contentController');
 
+const { ensureAuthenticated } = require('../middleware/authMiddleware');
 
-router.get('/problems/:id', getProblemById);
-router.get('/problems/category/:category', getProblemsByCat);
+router.get('/problems/:id',ensureAuthenticated, getProblemById);
+router.get('/problems/category/:category',ensureAuthenticated, getProblemsByCat);
 
 
 router.get('/topics', getAllTopics); // Gets all topics for the form

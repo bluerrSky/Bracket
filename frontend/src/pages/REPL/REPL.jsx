@@ -98,19 +98,59 @@ export default function REPL() {
                         {resourcesMutation.isPending ? "Suggesting..." : 'Suggest Resources 📚'}
                     </button>
                     
-                    {resourcesMutation.isSuccess && (
-                        <div className={styles.resourcesList}>
-                            <h4>Here are some helpful resources:</h4>
-                            <ul>
-                                {resources.map((resource, index) => (
-                                    <li key={index}>
-                                        <a href={resource.url} target="_blank" rel="noopener noreferrer">
-                                            {resource.title}
-                                        </a>
-                                        <p>{resource.description}</p>
-                                    </li>
-                                ))}
-                            </ul>
+                {resourcesMutation.isSuccess && (
+                    <div className={styles.resourcesList}>
+                        <h4>Here are some helpful resources:</h4>
+                        
+                        {/* Map over each CONCEPT (e.g., "Binary Search") */}
+                        {resources.map((resource, index) => (
+                            <div key={index} className={styles.resourceItem}>
+                                
+                                {/* 1. Display the concept and description */}
+                                <strong>{resource.concept}</strong>
+                                <p>{resource.description}</p>
+
+                                {/* 2. Display the Article Links (if any exist) */}
+                                {resource.links && resource.links.length > 0 && (
+                                    <>
+                                        <h5>Articles:</h5>
+                                        <ul>
+                                            {resource.links.map((link, linkIndex) => (
+                                                <li key={linkIndex}>
+                                                    <a href={link.url} target="_blank" rel="noopener noreferrer">
+                                                        {link.title}
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+
+                                {/* 3. Display the Video Links (if any exist) */}
+                                {resource.videos && resource.videos.length > 0 && (
+                                    <>
+                                        <h5>Videos:</h5>
+                                        <ul>
+                                            {resource.videos.map((video, videoIndex) => (
+                                                <li key={videoIndex} className={styles.videoItem}>
+                                                    {video.thumbnail && (
+                                                        <img 
+                                                            src={video.thumbnail} 
+                                                            alt="video thumbnail" 
+                                                            width="80" 
+                                                            style={{ marginRight: '10px', verticalAlign: 'middle' }} 
+                                                        />
+                                                    )}
+                                                    <a href={video.url} target="_blank" rel="noopener noreferrer">
+                                                        {video.title}
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </>
+                                )}
+                            </div>
+                        ))}
                         </div>
                     )}
                 </div>

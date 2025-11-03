@@ -1,8 +1,6 @@
-// setup/populate_tutorials.js
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const pool = require('../db/pool');
 
-// --- DEFINE YOUR TUTORIAL CONTENT HERE ---
+
 const tutorials = [
   {
     topic_name: 'Recursion',
@@ -386,7 +384,7 @@ async function main() {
     try {
         client = await pool.connect();
         await client.query('BEGIN');
-        console.log('--- Populating tutorials... ---');
+        console.log('Populating tutorials');
 
         for (const t of tutorials) {
             await client.query(
@@ -398,10 +396,10 @@ async function main() {
         }
         
         await client.query('COMMIT');
-        console.log(`✅ --- ${tutorials.length} tutorials populated! ---`);
+        console.log(`${tutorials.length} tutorials populated!`);
     } catch (err) {
         if (client) await client.query('ROLLBACK');
-        console.error('❌ --- FAILED TO POPULATE TUTORIALS --- ❌', err.message);
+        console.error('FAILED TO POPULATE TUTORIALS', err.message);
     } finally {
         if (client) client.release();
         await pool.end();
