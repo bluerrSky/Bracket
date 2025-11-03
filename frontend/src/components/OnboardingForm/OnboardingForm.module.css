@@ -3,19 +3,25 @@
     width: 100%;
     color: #fff;
     padding: 2rem;
-    background: rgba(44, 44, 68, 0.8);
-    backdrop-filter: blur(5px);
-    border-radius: 8px;
+    border-radius: 2rem;
+    background: rgba(91	,74,	62, 0.8);
+    backdrop-filter: blur(1px);
+    border-radius: 1rem;
+    
 }
 .formContainer h2 {
     text-align: center;
     margin-bottom: 0.5rem;
     color: #e0e0e0;
+    font-family: var(--ff-heading);
+    font-size: var(--font-size-xl);
 }
 .formContainer p {
     text-align: center;
     margin-bottom: 2rem;
     color: #aaa;
+    font-family: var(--ff-content);
+    font-size: calc(var(--font-size-base) + 0.2rem);
 }
 .topicRow {
     display: flex;
@@ -23,13 +29,30 @@
     align-items: center;
     margin-bottom: 1.5rem;
     padding: 1rem;
-    background: #2c2c44;
+    background: rgb(36	31	21);
     border-radius: 8px;
 }
-.topicRow label {
-    font-size: 1.1rem;
-    font-weight: 500;
+
+.topicRow .iconAndLabel{
+    --icon-size: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
+.topicRow label {
+    font-size: calc(var(--font-size-base) + 0.2rem);
+    font-weight: 500;
+    font-family: var(--ff-heading);
+}
+
+.topicRow .iconContainer{
+    height: var(--icon-size);
+    width: var(--icon-size);
+    /* border: 1px solid white; */
+    /* background-image: url(../../assets/images/arrayIcon.png); */
+    background-size: cover;
+}
+
 .buttonGroup {
     display: flex;
     gap: 0.5rem;
@@ -49,23 +72,24 @@
     border-color: #888;
 }
 .skillButton.selected {
-    background-color: #4a90e2;
+    background-color: rgb(243	152	61);
     color: white;
-    border-color: #4a90e2;
+    border-color: rgb(243	152	61);
     font-weight: bold;
 }
 .submitButton {
     display: block;
     width: 100%;
     padding: 0.8rem;
-    font-size: 1.1rem;
+    font-size: var(--font-size-md);
     font-weight: bold;
     color: white;
-    background-color: #007bff;
+    background-color: rgb(243	152	61);
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 2rem;
+    margin-top: 0.5rem;
+    font-family: var(--ff-content);
 }
 .submitButton:disabled {
     background-color: #555;

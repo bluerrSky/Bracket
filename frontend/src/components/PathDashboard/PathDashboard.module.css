@@ -2,10 +2,11 @@
 .pathContainer {
     color: #fff;
     width: 100%;
-    background: rgba(44, 44, 68, 0.8);
+    background: rgba(91	,74,	62, 0.8);
     backdrop-filter: blur(5px);
     border-radius: 8px;
     padding: 2rem;
+    font-family: var(--ff-content);
 }
 .header {
     display: flex;
@@ -18,13 +19,15 @@
 .header h2 {
     color: #e0e0e0;
     margin: 0;
+    font-size: var(--font-size-xl);
+    font-family: var(--ff-heading);
 }
 .regenButton {
     padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: bold;
     color: white;
-    background-color: #5a67d8;
+    background-color: rgb(243	152	61);;
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -54,8 +57,9 @@
     flex-wrap: wrap;
 }
 .difficulty {
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: bold;
+    font-family: var(--ff-content);
     padding: 0.2rem 0.6rem;
     border-radius: 10px;
     text-transform: uppercase;
@@ -69,7 +73,7 @@
     font-weight: 500;
 }
 .categoryLink {
-    font-size: 0.9rem;
+    font-size: 1rem;
     color: #aaa;
     text-decoration: none;
     padding: 0.2rem 0.5rem;
@@ -90,12 +94,12 @@
     color: #ccc;
     font-style: italic;
 }
-.recommended { color: #4a90e2; }
+.recommended { color: rgb(243	152	61);; }
 .completed { color: #28a745; }
 .skipped { color: #aaa; }
 .solveButton {
     padding: 0.5rem 1rem;
-    background-color: #007bff;
+    background-color:rgb(243	152	61);
     color: white;
     text-decoration: none;
     border-radius: 6px;

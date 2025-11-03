@@ -1,9 +1,10 @@
 const pool = require('../db/pool');
+require('dotenv').config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-require('dotenv').config();  
 const AImodel=process.env.AI_MODEL;
 
 async function main() {
+    console.log(`MODEL NAME: ${AImodel}`);
     let client;
     let genAI;
     try {
@@ -46,7 +47,19 @@ async function main() {
         const model = genAI.getGenerativeModel({ model: AImodel });
         const result = await model.generateContent(prompt);
         const response = await result.response;
-        const aiRules = JSON.parse(response.text());
+// --- FIX: Clean the AI's response before parsing ---
+        const rawText = response.text();
+        
+        // Find the first '[' and the last ']'
+        const jsonStartIndex = rawText.indexOf('[');
+        const jsonEndIndex = rawText.lastIndexOf(']');
+        
+        // Extract just the JSON array string
+        const cleanText = rawText.substring(jsonStartIndex, jsonEndIndex + 1);
+        
+        // Now, parse the clean text
+        const aiRules = JSON.parse(cleanText);
+        // --- End of Fix ---
 
         console.log('--- AI generated these rules: ---');
         console.log(aiRules);
