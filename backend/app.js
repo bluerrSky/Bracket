@@ -16,44 +16,105 @@ const app = express();
 
 const server = http.createServer(app); 
 
+// --- FIX 1: Use a Map to track unique users and their connection count ---
+// We will store { userId -> numberOfTabsOpen }
+const onlineUsers = new Map();
+
 // Socket.IO Initialization and Configuration
 const io = new Server(server, {
     cors: {
-        
-        // The frontend makes the connection, so this is the 'origin'
         origin: [
-            "http://localhost:5173", // Local Development URL
-"https://bracket-eight.vercel.app",
-            "https://bracket-1.onrender.com" // If frontend talks to backend's domain
+            "http://localhost:5173", 
+            "https://bracket-eight.vercel.app",
+            "https://bracket-1.onrender.com"
         ], 
         credentials: true,
         methods: ["GET", "POST"]
     }
 });
 
-let onlineUsersCount = 0;
+// --- FIX 2: Create the session middleware first, so we can share it ---
+if (!process.env.SECRET) {
+    console.error("FATAL ERROR: SESSION_SECRET not defined in environment variables.");
+    // In a real app, you'd exit here: process.exit(1);
+}
 
-io.on('connection', (socket) => {
-   
-    onlineUsersCount++;
-    console.log(`User connected. Current users: ${onlineUsersCount}`);
-    io.emit('online_count_update', onlineUsersCount);
-
-    
-    socket.on('disconnect', () => {
-        onlineUsersCount = Math.max(0, onlineUsersCount - 1); 
-        console.log(`User disconnected. Current users: ${onlineUsersCount}`);
-        io.emit('online_count_update', onlineUsersCount);
-    });
+const sessionMiddleware = session({
+    secret: process.env.SECRET || 'a_fallback_secret_key_for_dev_only', 
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' 
+    }
 });
 
 
+// --- Socket.IO Connection Logic ---
+io.on('connection', (socket) => {
+    // --- FIX 4: Get the user from the socket's session ---
+    // This 'user' object is attached by the passport middleware
+    const user = socket.request.user;
+
+    // Only track authenticated users
+    if (user && user.user_id) {
+        const userId = user.user_id;
+
+        // Get current connection count (0 if this is their first tab)
+        const connectionCount = onlineUsers.get(userId) || 0;
+        
+        // Set new count
+        onlineUsers.set(userId, connectionCount + 1);
+        
+        console.log(`[Socket] User ${userId} connected. Total tabs: ${connectionCount + 1}.`);
+        
+    } else {
+        console.log("[Socket] A guest connected.");
+        // You could track guests here if you want, e.g., using socket.id
+    }
+
+    // The 'online_count' is now the *size* of the Map (unique users)
+    const uniqueUserCount = onlineUsers.size;
+    io.emit('online_count_update', uniqueUserCount);
+    console.log(`[Socket] Unique users online: ${uniqueUserCount}`);
+
+    
+    socket.on('disconnect', () => {
+        // --- FIX 5: Decrement/remove the user on disconnect ---
+        if (user && user.user_id) {
+            const userId = user.user_id;
+            
+            const connectionCount = onlineUsers.get(userId);
+
+            if (connectionCount) {
+                if (connectionCount === 1) {
+                    // This was their last tab, remove them
+                    onlineUsers.delete(userId);
+                    console.log(`[Socket] User ${userId} fully disconnected.`);
+                } else {
+                    // They still have other tabs, just decrement
+                    onlineUsers.set(userId, connectionCount - 1);
+                    console.log(`[Socket] User ${userId} closed a tab. Remaining: ${connectionCount - 1}.`);
+                }
+            }
+        } else {
+            console.log("[Socket] A guest disconnected.");
+        }
+
+        // The 'online_count' is the *size* of the Map
+        const uniqueUserCount = onlineUsers.size;
+        io.emit('online_count_update', uniqueUserCount);
+        console.log(`[Socket] Unique users online: ${uniqueUserCount}`);
+    });
+});
+// --- End of Socket Logic ---
 
 
 app.use(cors({
     origin: [
         "http://localhost:5173",
-"https://bracket-eight.vercel.app"
+        "https://bracket-eight.vercel.app"
     ],
     credentials: true, 
 }));
@@ -62,25 +123,18 @@ app.use(cors({
 app.use(express.json());
 
 
-if (!process.env.SECRET) {
-    console.error("FATAL ERROR: SESSION_SECRET not defined in environment variables.");
-}
-
-app.use(session({
-    secret: process.env.SECRET || 'a_fallback_secret_key_for_dev_only', 
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        
-        secure: process.env.NODE_ENV === 'production', // Use 'secure: true' in production (HTTPS)
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // Use 'none' for cross-domain
-    }
-}));
-
-
+// --- FIX 3: Use the middleware for Express AND Socket.IO ---
+// Apply to Express
+app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Apply to Socket.IO
+io.engine.use(sessionMiddleware);
+io.engine.use(passport.initialize());
+io.engine.use(passport.session());
+// --- End of Fix 3 ---
+
 
 app.use('/', authRouter);
 app.use('/submit', judgeRouter);

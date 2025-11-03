@@ -9,7 +9,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 // API function to fetch problems for a specific category
 const fetchProblems = async (category) => {
     // This API endpoint is from your backend 'indController.js'
-    const { data } = await axios.get(`${API_BASE_URL}/content/problems/category/${category}`);
+const { data } = await axios.get(
+        `${API_BASE_URL}/content/problems/category/${category}`,
+        { withCredentials: true } // <-- ADD THIS LINE
+    );
+    console.log(data);
     return data;
 };
 
@@ -41,21 +45,21 @@ export default function ProblemList({ topicName }) {
             <h3 className={styles.listTitle}>Practice Problems</h3>
             <ul className={styles.list}>
                 {problems.map(problem => (
-                    <li key={problem.problem_id} className={styles.problemItem}>
-                        <div className={styles.problemInfo}>
-                            <span className={`${styles.difficulty} ${styles[problem.difficulty?.toLowerCase()]}`}>
-                                {problem.difficulty}
-                            </span>
-                            <span className={styles.title}>{problem.title}</span>
-                        </div>
-                        {/* Link to the REPL page */}
-                        <Link 
+                    <Link 
                             to={`/page/${problem.category}/${problem.problem_id}`} 
                             className={styles.solveButton}
                         >
-                            Solve
-                        </Link>
+                    <li key={problem.problem_id} className={problem.solved ? `${styles.solved}` : `${styles.notSolved}`}>
+                        <div className={styles.problemInfo}>
+
+                            <span className={styles.title}>{problem.title}</span>
+                            <span className={`${styles.difficulty} ${styles[problem.difficulty?.toLowerCase()]}`}>
+                                {problem.difficulty}
+                            </span>
+                        </div>
+
                     </li>
+                    </Link>
                 ))}
             </ul>
         </div>

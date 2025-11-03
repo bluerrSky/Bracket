@@ -2,7 +2,7 @@ const test_cases = [
   // --- Problem 51: Graph Traversal (BFS) ---
   { problem_id: 51, input: "5 4 1\n1 2\n1 3\n2 4\n3 5", expected_output: "1 2 3 4 5", is_sample: true },
   { problem_id: 51, input: "3 2 2\n1 2\n2 3", expected_output: "2 1 3", is_sample: true },
-  { problem_id: 51, input: "4 3 3\n1 3\n3 4\n2 3", expected_output: "3 1 4 2", is_sample: true },
+  { problem_id: 51, input: "4 3 3\n1 3\n3 4\n2 3", expected_output: "3 1 2 4", is_sample: true },
 
   { problem_id: 51, input: "6 5 1\n1 2\n1 3\n2 4\n3 5\n4 6", expected_output: "1 2 3 4 5 6", is_sample: false },
   { problem_id: 51, input: "4 2 2\n1 2\n3 4", expected_output: "2 1", is_sample: false },

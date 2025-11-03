@@ -1,0 +1,55 @@
+.problemListContainer{
+    margin-top: 2rem;
+
+}
+
+.listTitle{
+    font-size: var(--font-size-lg);
+    font-family: var(--ff-heading);
+}
+
+.list{
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-family: var(--ff-content);
+    font-size: calc(var(--font-size-md) - 0.3rem);
+}
+
+a{
+    text-decoration: none;
+}
+
+
+.list  li{
+    border: 1px solid white;
+    list-style-type: none;
+    padding: 1rem;
+    color: rgb(247	110	87);
+    background-color: rgb(6	11	33);
+}
+
+.list .solved{
+    color: rgb(255	225	149);
+    background-color: rgb(247	110	87);
+}
+
+.list .problemInfo{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.list .difficulty{
+    border: 1px solid white;
+    padding: 0.5rem;
+}
+
+ .easy{
+    color: green;
+}
+
+.hard{
+    color: red;
+}
