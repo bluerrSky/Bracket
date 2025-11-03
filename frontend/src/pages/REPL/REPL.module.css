@@ -64,3 +64,26 @@
 .resourcesList ul a:hover{
     color: var(--clr-side-kick);
 }
+
+/* Add this to REPL.module.css */
+.resourceItem {
+  margin-top: 1.5rem;
+  border-top: 1px solid #444;
+  padding-top: 1rem;
+}
+
+.resourceItem h5 {
+  margin-bottom: 0.5rem;
+  color: #a9c5ff;
+}
+
+.resourceItem ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.videoItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}

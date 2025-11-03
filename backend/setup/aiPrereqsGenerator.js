@@ -1,8 +1,6 @@
-// setup/ai_generate_prereqs.js
-require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
 const pool = require('../db/pool');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-
+const AImodel=process.env.AI_MODEL;
 async function main() {
     let client;
     let genAI;
@@ -42,7 +40,7 @@ async function main() {
         `;
 
         console.log('--- Asking AI to generate prerequisite map... ---');
-        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: AImodel });
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const aiRules = JSON.parse(response.text());
@@ -67,11 +65,11 @@ async function main() {
         }
         
         await client.query('COMMIT');
-        console.log('✅ --- Prerequisite map has been generated and saved! ---');
+        console.log('--- Prerequisite map has been generated and saved! ---');
 
     } catch (err) {
         if (client) await client.query('ROLLBACK');
-        console.error('❌ --- FAILED TO GENERATE PREREQ MAP --- ❌');
+        console.error('--- FAILED TO GENERATE PREREQ MAP --- ');
         console.error(err.message);
     } finally {
         if (client) client.release();

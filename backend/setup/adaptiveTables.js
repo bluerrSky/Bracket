@@ -1,12 +1,14 @@
 const pool = require('../db/pool');
 
 const sql = `
+    drop table if exists topic_prerequisites;
     CREATE TABLE IF NOT EXISTS topic_prerequisites (
         topic_id VARCHAR(20) NOT NULL,
         prerequisite_id VARCHAR(20) NOT NULL,
         PRIMARY KEY (topic_id, prerequisite_id)
     );
     
+    drop table if exists user_topic_mastery;
     CREATE TABLE IF NOT EXISTS user_topic_mastery (
         user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
         topic_name VARCHAR(20) NOT NULL,
@@ -16,6 +18,7 @@ const sql = `
         PRIMARY KEY (user_id, topic_name)
     );
     
+    drop table if exists user_learning_path;
     CREATE TABLE IF NOT EXISTS user_learning_path (
         path_id SERIAL PRIMARY KEY,
         user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
@@ -24,13 +27,15 @@ const sql = `
         order_index INT NOT NULL
     );
     
+    drop table if exists tutorials;
     CREATE TABLE IF NOT EXISTS tutorials (
         topic_name VARCHAR(20) PRIMARY KEY,
         title VARCHAR(200) NOT NULL,
-        content TEXT NOT NULL, -- Your Markdown tutorial content
-        subtopics JSONB -- e.g., ['Base Case', 'Recursive Step']
+        content TEXT NOT NULL, 
+        subtopics JSONB 
     );
     
+    drop table if exists user_tutorial_progress;
     CREATE TABLE IF NOT EXISTS user_tutorial_progress (
         user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
         topic_name VARCHAR(20) REFERENCES tutorials(topic_name) ON DELETE CASCADE,
@@ -42,11 +47,11 @@ const sql = `
 
 async function main() {
     try {
-        console.log('--- Creating/Updating all adaptive tables... ---');
+        console.log('Creating adaptive tables');
         await pool.query(sql);
-        console.log('✅ --- All 5 adaptive tables are ready! ---');
+        
     } catch (err) {
-        console.error('❌ Error creating adaptive tables:', err.message);
+        console.error('Error creating adaptive tables:', err.message);
     } finally {
         await pool.end();
     }

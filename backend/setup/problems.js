@@ -1,5 +1,3 @@
-// setup/problems.js
-// Note: Changed path to '../db/pool'
 const pool = require('../db/pool');
 
 // Problems table
@@ -18,51 +16,54 @@ const sql1 = `
 
 // Test_cases table
 const sql2 = `
-    drop table if exists test_cases cascade;
-    create table test_cases(
-        tid int primary key GENERATED ALWAYS AS IDENTITY,
-        problem_id int references problems(problem_id) on delete cascade,
-        input text not null,
-        expected_output text not null,
-        is_sample boolean default false
+    DROP TABLE IF EXISTS test_cases CASCADE;
+
+    CREATE TABLE test_cases (
+        tid INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        problem_id INT REFERENCES problems(problem_id) ON DELETE CASCADE,
+        input TEXT NOT NULL,
+        expected_output TEXT NOT NULL,
+        is_sample BOOLEAN DEFAULT FALSE
     );
+
 `;
 
 // Submissions table
 const sql3 = `
-    drop table if exists submissions cascade;
-    create table submissions(
-        sid int primary key GENERATED ALWAYS AS IDENTITY,
-        user_id int references users(user_id) on delete cascade,
-        problem_id int references problems(problem_id) on delete cascade,
-        language_id int,
-        source_code text,
-        sumitted_at date,
-        status varchar(20),
-        execution_time float,
-        execution_memory float,
-        token varchar(50)
+    DROP TABLE IF EXISTS submissions CASCADE;
+
+    CREATE TABLE submissions (
+        sid INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        user_id INT REFERENCES users(user_id) ON DELETE CASCADE,
+        problem_id INT REFERENCES problems(problem_id) ON DELETE CASCADE,
+        language_id INT,
+        source_code TEXT,
+        submitted_at DATE, 
+        status VARCHAR(20),
+        execution_time DOUBLE PRECISION,  
+        execution_memory DOUBLE PRECISION,  
+        token VARCHAR(50)
     );
+
 `;
 
 async function main() {
     try {
-        console.log('--- Creating "problems" table... ---');
+        
         await pool.query(sql1);
-        console.log('✅ "problems" table created.');
+        console.log('problems table created.');
 
-        console.log('--- Creating "test_cases" table... ---');
+
         await pool.query(sql2);
-        console.log('✅ "test_cases" table created.');
+        console.log('test_cases table created.');
         
-        console.log('--- Creating "submissions" table... ---');
         await pool.query(sql3);
-        console.log('✅ "submissions" table created.');
+        console.log('submissions table created.');
         
-        console.log('--- All tables created successfully! ---');
-        await pool.end(); // This is OK here because it's a script
+    
+        await pool.end(); 
     } catch (err) {
-        console.error('❌ Error creating tables:', err.message);
+        console.error('Error creating tables:', err.message);
     }
 }
 main();
