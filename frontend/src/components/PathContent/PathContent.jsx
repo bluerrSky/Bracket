@@ -51,9 +51,9 @@ export default function PathContent({ topicName }){
             </div>
             <div className={styles.contentSections}>
                 <div className={styles.introSection}>
-                    <div className={styles.sectionTitle}>
+                    {/* <div className={styles.sectionTitle}>
                         Introduction to {tutorial.topic_name}
-                    </div>
+                    </div> */}
                     {/* Render content from the database */}
                     <RenderMarkdown content={tutorial.content} />
                     

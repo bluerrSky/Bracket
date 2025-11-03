@@ -1,8 +1,9 @@
 
 .pathPageContainer{
     /* height: 100vh; */
-    display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(650px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     /* border: 2px solid white; */
     /* align-items: center; */
     /* gap: 2rem; */

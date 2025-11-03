@@ -1,6 +1,7 @@
 .pathContentContainer{
     /* border: 2px solid darkgoldenrod; */
     flex: 1;
+    min-width: 600px;
     /* height: 300vh; */
     color: white;
     display: flex;
@@ -9,6 +10,7 @@
     gap: 2rem;
     position: relative;
     padding: 0 5rem;
+    align-items: center;
 }
 
 @media (max-width: 1300px) {

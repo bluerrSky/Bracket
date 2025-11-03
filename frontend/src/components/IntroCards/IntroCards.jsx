@@ -31,8 +31,8 @@ export default function IntroCards(){
     return (
         <>
         <div className={styles.introCards}>
-            <Card cardId={2} cardTitle={"Track your Progress"}
-             cardBody={"Get rated after every contest using an ELO-based system. Watch your rating grow and climb the leaderboard."}
+            <Card cardId={2} cardTitle={"FORGE YOUR PATH"}
+             cardBody={"Start with a quick skill assessment to generate a custom-built learning path. Conquer topics one by one and track your progress as you master each concept."}
              cardImg={CardWizardImg} cardBackground={`rgb(241	125	91)`} imgHeight={250} imgWidth={300}/>
              
             <Card cardId={1} cardTitle={"Practice Problems"}
@@ -41,8 +41,8 @@ export default function IntroCards(){
 
 
 
-            <Card cardId={3} cardTitle={"Live Contests"}
-             cardBody={"Compete in daily timed contests exclusive to our community. Experience a real-time leaderboard."}
+            <Card cardId={3} cardTitle={"STUDY THE ARCHIVES"}
+             cardBody={"Dive into our library of in-depth guides. Learn key terminologies, study code examples, and master the theory behind the algorithms before you solve."}
              cardImg={CardSwordImg} imgHeight={180} imgWidth={200}/>
 
         </div>
