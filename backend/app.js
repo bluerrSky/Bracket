@@ -13,7 +13,7 @@ const contentRouter = require('./routes/contentRouter');
 const adaptiveRouter=require('./routes/adaptiveRouter');
 
 const app = express();
-
+app.set('trust proxy', 1);
 const server = http.createServer(app); 
 
 // --- FIX 1: Use a Map to track unique users and their connection count ---
