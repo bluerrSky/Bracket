@@ -1,15 +1,24 @@
 /* pages/AdaptivePathPage/AdaptivePathPage.module.css */
+
+.adaptivePage{
+    width: 100vw;
+    height: 100vh;
+      background: url(../../assets/images/adaptivePathbg2.jpg) no-repeat center / cover;
+}
+
 .container {
     width: 100%;
     max-width: 900px;
-    margin: 2rem auto;
+    margin: 0rem auto;
     padding: 2rem;
-    background-color: #1a1a2e;
+    /* background-color: #1a1a2e; */
     border-radius: 8px;
     color: white;
     /* This page should be below the navbar, not centered */
     min-height: 80vh; 
 }
+
+
 .loading, .error {
     color: white;
     font-size: 1.2rem;

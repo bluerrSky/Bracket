@@ -4,7 +4,7 @@
 
 .cardContainerScroll {
   height: 500px;
-  width: 62vw;
+  width: max(350px, 62vw);
   overflow: scroll;
   display: flex;
   flex-wrap: nowrap;
@@ -56,4 +56,14 @@
 .arrowRight {
   right: 0;
   transform: translateY(-50%) translateX(100%) rotate(180deg);
+}
+
+@media (max-width: 1000px) {
+  .arrowLeft {
+  transform: translateY(-50%) translateX(-45%);
+  }
+  .arrowRight {
+  right: 0;
+  transform: translateY(-50%) translateX(45%) rotate(180deg);
+}
 }

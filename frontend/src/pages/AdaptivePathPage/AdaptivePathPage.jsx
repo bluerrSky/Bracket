@@ -29,6 +29,8 @@ export default function AdaptivePathPage() {
     }
 
     return (
+        <div className={styles.adaptivePage}>
+
         <div className={styles.container}>
             {path && path.length > 0 ? (
                 <PathDashboard path={path} onPathUpdate={refetch} />
@@ -36,5 +38,7 @@ export default function AdaptivePathPage() {
                 <OnboardingForm onPathCreated={refetch} />
             )}
         </div>
+        </div>
+
     );
 }
