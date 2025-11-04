@@ -82,7 +82,8 @@ const sessionMiddleware = session({
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     secure: isProd,              // true in production (HTTPS), false for local dev
-    sameSite: isProd ? 'none' : 'lax' // 'none' for cross-site prod, 'lax' for local
+    sameSite: isProd ? 'none' : 'lax', // 'none' for cross-site prod, 'lax' for local
+    partitioned: isProd
   }
 });
 
