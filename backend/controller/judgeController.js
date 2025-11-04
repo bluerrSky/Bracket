@@ -21,7 +21,7 @@ async function updateUserMastery(client, userId, problemId, verdict) {
 
         if (verdict === 'Accepted') {
             // Tuned for a smaller problem bank
-            if (difficulty === 'Easy') scoreChange = 8;
+            if (difficulty === 'Easy') scoreChange = 4;
             else if (difficulty === 'Medium') scoreChange = 10;
             else if (difficulty === 'Hard') scoreChange = 15;
             

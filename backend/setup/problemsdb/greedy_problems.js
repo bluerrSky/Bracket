@@ -447,7 +447,198 @@ Print one integer: the maximum score you can get. However, if you can get an arb
     difficulty: 'Hard',
     time_limit: 1,
     memory_limit: 524288
-  }
+  },
+  {
+  problem_id: 58,
+  category: 'Greedy',
+  title: 'Activity Selection',
+  description: `
+You are given n activities with their start and end times. You can perform only one activity at a time.  
+Your task is to select the maximum number of activities that can be performed.
+
+### Input
+The first line contains an integer n — the number of activities.  
+The next n lines each contain two integers s and e — the start and end time of an activity.
+
+### Output
+Print the maximum number of activities you can perform.
+
+### Constraints
+1 <= n <= 10^5  
+1 <= s < e <= 10^9
+
+### Example
+**Input:**
+\`\`\`
+6
+1 3
+2 5
+3 9
+6 8
+5 7
+8 9
+\`\`\`
+
+**Output:**
+\`\`\`
+4
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 512000
+},
+{
+  problem_id: 59,
+  category: 'Greedy',
+  title: 'Minimum Coins',
+  description: `
+You are given an integer n representing an amount of money.  
+You have infinite coins of denominations {1, 2, 5, 10, 20, 50, 100, 500, 1000}.  
+Find the minimum number of coins required to make this amount.
+
+### Input
+A single integer n — the total amount.
+
+### Output
+Print the minimum number of coins required.
+
+### Constraints
+1 <= n <= 10^6
+
+### Example
+**Input:**
+\`\`\`
+121
+\`\`\`
+
+**Output:**
+\`\`\`
+3
+\`\`\`
+
+**Explanation:**
+100 + 20 + 1 = 121
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 512000
+},
+{
+  problem_id: 60,
+  category: 'Greedy',
+  title: 'Maximize Array Sum After K Negations',
+  description: `
+You are given an array of integers and an integer k.  
+In one operation, you can choose any element and multiply it by -1.  
+You can perform at most k such operations.  
+Find the maximum possible sum of the array after k operations.
+
+### Input
+The first line contains two integers n and k.  
+The next line contains n integers — the elements of the array.
+
+### Output
+Print the maximum possible sum after k negations.
+
+### Constraints
+1 <= n <= 10^5  
+1 <= k <= 10^9  
+-10^4 <= arr[i] <= 10^4
+
+### Example
+**Input:**
+\`\`\`
+5 2
+2 -3 -1 5 -4
+\`\`\`
+
+**Output:**
+\`\`\`
+13
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 512000
+},
+{
+  problem_id: 61,
+  category: 'Greedy',
+  title: 'Chocolate Distribution',
+  description: `
+You are given n packets of chocolates, each containing a[i] chocolates.  
+There are m students, and you need to distribute packets such that the difference between  
+the maximum and minimum chocolates given to students is minimized.
+
+### Input
+The first line contains two integers n and m.  
+The next line contains n integers — the chocolates in each packet.
+
+### Output
+Print the minimum difference possible.
+
+### Constraints
+1 <= m <= n <= 10^5  
+1 <= a[i] <= 10^9
+
+### Example
+**Input:**
+\`\`\`
+7 3
+7 3 2 4 9 12 56
+\`\`\`
+
+**Output:**
+\`\`\`
+2
+\`\`\`
+
+**Explanation:**
+We can pick packets with 2, 3, 4 chocolates. Difference = 4 - 2 = 2.
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 512000
+},
+
+{
+  problem_id: 62,
+  category: 'Greedy',
+  title: 'Largest Number from Array',
+  description: `
+You are given a list of non-negative integers. Arrange them such that they form the largest possible number.
+
+### Input
+The first line contains an integer n — the size of the array.  
+The next line contains n space-separated non-negative integers.
+
+### Output
+Print the largest number that can be formed.
+
+### Constraints
+1 <= n <= 10^5  
+0 <= a[i] <= 10^9
+
+### Example
+**Input:**
+\`\`\`
+5
+3 30 34 5 9
+\`\`\`
+
+**Output:**
+\`\`\`
+9534330
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 512000
+}
+
+
+
 ];
 
 module.exports = { problems };

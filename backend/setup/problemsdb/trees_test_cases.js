@@ -124,6 +124,189 @@ const test_cases = [
 { problem_id: 38, input: "[1,null,2,3]", expected_output: "[1,null,2,3]", is_sample: false },
 // Additional tests depend on your platform specification
 
+
+{ problem_id: 73, input: "[1,null,2,3]", expected_output: "[1,3,2]", is_sample: true },
+{ problem_id: 73, input: "[1,2,3]", expected_output: "[2,1,3]", is_sample: false },
+{ problem_id: 73, input: "[4,2,6,1,3,5,7]", expected_output: "[1,2,3,4,5,6,7]", is_sample: false },
+{ problem_id: 73, input: "[1]", expected_output: "[1]", is_sample: false },
+{ problem_id: 73, input: "[5,3,null,2,null,1]", expected_output: "[1,2,3,5]", is_sample: false },
+{ problem_id: 73, input: "[10,5,15,null,null,12,20]", expected_output: "[5,10,12,15,20]", is_sample: false },
+{ problem_id: 73, input: "[1,2,null,3,4]", expected_output: "[3,2,4,1]", is_sample: false },
+{ problem_id: 73, input: "[3,9,20,null,null,15,7]", expected_output: "[9,3,15,20,7]", is_sample: false },
+{ problem_id: 73, input: "[2,1,3,null,null,null,4]", expected_output: "[1,2,3,4]", is_sample: false },
+{ problem_id: 73, input: "[1,null,2,null,3,null,4]", expected_output: "[1,2,3,4]", is_sample: false },
+{ problem_id: 73, input: "[1,2,null,3,null,4,null,5]", expected_output: "[5,4,3,2,1]", is_sample: false },
+{ problem_id: 73, input: "[7,3,9,1,5,8,10]", expected_output: "[1,3,5,7,8,9,10]", is_sample: false },
+{ problem_id: 73, input: "[5,4,null,3,null,2]", expected_output: "[2,3,4,5]", is_sample: false },
+{ problem_id: 73, input: "[5,1,7,null,null,6,8]", expected_output: "[1,5,6,7,8]", is_sample: false },
+{ problem_id: 73, input: "[2,null,3,null,4]", expected_output: "[2,3,4]", is_sample: false },
+
+
+{ problem_id: 74, input: "[1,null,2,3]", expected_output: "[1,2,3]", is_sample: true },
+{ problem_id: 74, input: "[1,2,3]", expected_output: "[1,2,3]", is_sample: false },
+{ problem_id: 74, input: "[4,2,6,1,3,5,7]", expected_output: "[4,2,1,3,6,5,7]", is_sample: false },
+{ problem_id: 74, input: "[1]", expected_output: "[1]", is_sample: false },
+{ problem_id: 74, input: "[5,3,null,2,null,1]", expected_output: "[5,3,2,1]", is_sample: false },
+{ problem_id: 74, input: "[10,5,15,null,null,12,20]", expected_output: "[10,5,15,12,20]", is_sample: false },
+{ problem_id: 74, input: "[3,9,20,null,null,15,7]", expected_output: "[3,9,20,15,7]", is_sample: false },
+{ problem_id: 74, input: "[1,null,2,3,4]", expected_output: "[1,2,3,4]", is_sample: false },
+{ problem_id: 74, input: "[7,3,9,1,5,8,10]", expected_output: "[7,3,1,5,9,8,10]", is_sample: false },
+{ problem_id: 74, input: "[1,null,2,null,3]", expected_output: "[1,2,3]", is_sample: false },
+{ problem_id: 74, input: "[5,4,6,null,null,3,7]", expected_output: "[5,4,6,3,7]", is_sample: false },
+{ problem_id: 74, input: "[2,1,3]", expected_output: "[2,1,3]", is_sample: false },
+{ problem_id: 74, input: "[1,2,null,3,null,4]", expected_output: "[1,2,3,4]", is_sample: false },
+{ problem_id: 74, input: "[1,2,3,4,5,6,7]", expected_output: "[1,2,4,5,3,6,7]", is_sample: false },
+{ problem_id: 74, input: "[2,null,3,null,4]", expected_output: "[2,3,4]", is_sample: false },
+
+
+
+
+{ problem_id: 75, input: "[1,null,2,3]", expected_output: "[3,2,1]", is_sample: true },
+{ problem_id: 75, input: "[1,2,3]", expected_output: "[2,3,1]", is_sample: false },
+{ problem_id: 75, input: "[4,2,6,1,3,5,7]", expected_output: "[1,3,2,5,7,6,4]", is_sample: false },
+{ problem_id: 75, input: "[1]", expected_output: "[1]", is_sample: false },
+{ problem_id: 75, input: "[5,3,null,2,null,1]", expected_output: "[1,2,3,5]", is_sample: false },
+{ problem_id: 75, input: "[10,5,15,null,null,12,20]", expected_output: "[5,12,20,15,10]", is_sample: false },
+{ problem_id: 75, input: "[3,9,20,null,null,15,7]", expected_output: "[9,15,7,20,3]", is_sample: false },
+{ problem_id: 75, input: "[1,2,null,3,null,4]", expected_output: "[4,3,2,1]", is_sample: false },
+{ problem_id: 75, input: "[7,3,9,1,5,8,10]", expected_output: "[1,5,3,8,10,9,7]", is_sample: false },
+{ problem_id: 75, input: "[1,null,2,null,3]", expected_output: "[3,2,1]", is_sample: false },
+{ problem_id: 75, input: "[5,4,6,null,null,3,7]", expected_output: "[4,3,7,6,5]", is_sample: false },
+{ problem_id: 75, input: "[2,1,3]", expected_output: "[1,3,2]", is_sample: false },
+{ problem_id: 75, input: "[1,2,3,4,5,6,7]", expected_output: "[4,5,2,6,7,3,1]", is_sample: false },
+{ problem_id: 75, input: "[2,null,3,null,4]", expected_output: "[4,3,2]", is_sample: false },
+{ problem_id: 75, input: "[8,4,10,2,6,9,12]", expected_output: "[2,6,4,9,12,10,8]", is_sample: false },
+
+
+
+{ problem_id: 76, input: "[1,2,3,4,5,null,6]", expected_output: "3", is_sample: true },
+{ problem_id: 76, input: "[1]", expected_output: "1", is_sample: false },
+{ problem_id: 76, input: "[1,2,3]", expected_output: "2", is_sample: false },
+{ problem_id: 76, input: "[4,2,6,1,3,5,7]", expected_output: "4", is_sample: false },
+{ problem_id: 76, input: "[1,2,null,3,null,4]", expected_output: "1", is_sample: false },
+{ problem_id: 76, input: "[5,3,7,2,4,6,8]", expected_output: "4", is_sample: false },
+{ problem_id: 76, input: "[1,null,2,null,3,null,4]", expected_output: "1", is_sample: false },
+{ problem_id: 76, input: "[2,1,3,null,null,null,4]", expected_output: "2", is_sample: false },
+{ problem_id: 76, input: "[3,9,20,null,null,15,7]", expected_output: "3", is_sample: false },
+{ problem_id: 76, input: "[1,2,3,4,5,6,7,8]", expected_output: "4", is_sample: false },
+{ problem_id: 76, input: "[7]", expected_output: "1", is_sample: false },
+{ problem_id: 76, input: "[1,2,3,4,null,5,null,6]", expected_output: "2", is_sample: false },
+{ problem_id: 76, input: "[10,5,15,null,null,12,20]", expected_output: "3", is_sample: false },
+{ problem_id: 76, input: "[1,2,3,null,4,null,5]", expected_output: "2", is_sample: false },
+{ problem_id: 76, input: "[4,2,5,null,null,null,7]", expected_output: "2", is_sample: false },
+
+
+
+
+{ problem_id: 77, input: "[5,3,8,1,4,7,9]", expected_output: "37", is_sample: true },
+{ problem_id: 77, input: "[1]", expected_output: "1", is_sample: false },
+{ problem_id: 77, input: "[1,2,3]", expected_output: "6", is_sample: false },
+{ problem_id: 77, input: "[4,2,6,1,3,5,7]", expected_output: "28", is_sample: false },
+{ problem_id: 77, input: "[10,5,15,null,null,12,20]", expected_output: "62", is_sample: false },
+{ problem_id: 77, input: "[3,9,20,null,null,15,7]", expected_output: "54", is_sample: false },
+{ problem_id: 77, input: "[1,2,null,3,null,4]", expected_output: "10", is_sample: false },
+{ problem_id: 77, input: "[7,3,9,1,5,8,10]", expected_output: "43", is_sample: false },
+{ problem_id: 77, input: "[2,null,3,null,4]", expected_output: "9", is_sample: false },
+{ problem_id: 77, input: "[1,2,3,4,5,6,7,8]", expected_output: "36", is_sample: false },
+{ problem_id: 77, input: "[5,4,6,null,null,3,7]", expected_output: "25", is_sample: false },
+{ problem_id: 77, input: "[8,4,10,2,6,9,12]", expected_output: "51", is_sample: false },
+{ problem_id: 77, input: "[1,null,2,3,4,5,6]", expected_output: "21", is_sample: false },
+{ problem_id: 77, input: "[4,2,5,null,null,3,7]", expected_output: "21", is_sample: false },
+{ problem_id: 77, input: "[10,9,20,15,null,null,25]", expected_output: "79", is_sample: false },
+
+
+{ problem_id: 78, input: "[3,9,20,null,null,15,7]", expected_output: "[[3],[9,20],[15,7]]", is_sample: true },
+{ problem_id: 78, input: "[1]", expected_output: "[[1]]", is_sample: false },
+{ problem_id: 78, input: "[1,2,3,4,5,6,7]", expected_output: "[[1],[2,3],[4,5,6,7]]", is_sample: false },
+{ problem_id: 78, input: "[1,2,null,3,null,4,null]", expected_output: "[[1],[2],[3],[4]]", is_sample: false },
+{ problem_id: 78, input: "[1,null,2,null,3]", expected_output: "[[1],[2],[3]]", is_sample: false },
+{ problem_id: 78, input: "[5,4,8,11,null,13,4,7,2,null,null,5,1]", expected_output: "[[5],[4,8],[11,13,4],[7,2,5,1]]", is_sample: false },
+{ problem_id: 78, input: "[10,5,15,3,7,null,18]", expected_output: "[[10],[5,15],[3,7,18]]", is_sample: false },
+{ problem_id: 78, input: "[2,1,3]", expected_output: "[[2],[1,3]]", is_sample: false },
+{ problem_id: 78, input: "[1,2,3,4,5,null,6,null,null,7]", expected_output: "[[1],[2,3],[4,5,6],[7]]", is_sample: false },
+{ problem_id: 78, input: "[1,2,3,4,5,6,7,8,9]", expected_output: "[[1],[2,3],[4,5,6,7],[8,9]]", is_sample: false },
+{ problem_id: 78, input: "[100]", expected_output: "[[100]]", is_sample: false },
+{ problem_id: 78, input: "[1,2,3,4,null,null,5]", expected_output: "[[1],[2,3],[4,5]]", is_sample: false },
+{ problem_id: 78, input: "[1,2,3,4,5,null,6,7,null,null,null,null,8]", expected_output: "[[1],[2,3],[4,5,6],[7,8]]", is_sample: false },
+{ problem_id: 78, input: "[7,null,9,8,null,null,10]", expected_output: "[[7],[9],[8],[10]]", is_sample: false },
+{ problem_id: 78, input: "[1,null,2,3,null,4,5]", expected_output: "[[1],[2],[3],[4,5]]", is_sample: false },
+
+
+
+
+{ problem_id: 79, input: "[3,9,20,null,null,15,7]", expected_output: "true", is_sample: true },
+{ problem_id: 79, input: "[1,2,2,3,3,null,null,4,4]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1,null,2,null,3]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1,2,3]", expected_output: "true", is_sample: false },
+{ problem_id: 79, input: "[1,2,2,3,null,null,3,4,null,null,4]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1]", expected_output: "true", is_sample: false },
+{ problem_id: 79, input: "[1,2,3,4,5,null,null,6]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1,2,3,4,null,5,6]", expected_output: "true", is_sample: false },
+{ problem_id: 79, input: "[1,2,null,3,null,4,null]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1,2,3,4,5,6,7]", expected_output: "true", is_sample: false },
+{ problem_id: 79, input: "[10,5,15,3,7,null,18]", expected_output: "true", is_sample: false },
+{ problem_id: 79, input: "[1,2,2,3,3,3,3]", expected_output: "true", is_sample: false },
+{ problem_id: 79, input: "[1,2,2,3,null,null,null,4]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1,null,2,3,null,4]", expected_output: "false", is_sample: false },
+{ problem_id: 79, input: "[1,2,3,4,5,6,null,7]", expected_output: "true", is_sample: false },
+
+
+
+{ problem_id: 80, input: "[1,2,3,4,5,6,7]\n2", expected_output: "22", is_sample: true },
+{ problem_id: 80, input: "[3,9,20,null,null,15,7]\n1", expected_output: "29", is_sample: false },
+{ problem_id: 80, input: "[1]\n0", expected_output: "1", is_sample: false },
+{ problem_id: 80, input: "[1,null,2,null,3,null,4]\n3", expected_output: "4", is_sample: false },
+{ problem_id: 80, input: "[5,4,8,11,null,13,4,7,2,null,null,5,1]\n2", expected_output: "28", is_sample: false },
+{ problem_id: 80, input: "[2,1,3]\n1", expected_output: "4", is_sample: false },
+{ problem_id: 80, input: "[1,2,3,4,5,6,7,8,9]\n3", expected_output: "17", is_sample: false },
+{ problem_id: 80, input: "[10,5,15,3,7,null,18]\n2", expected_output: "28", is_sample: false },
+{ problem_id: 80, input: "[1,2,3,4,null,5,null]\n2", expected_output: "9", is_sample: false },
+{ problem_id: 80, input: "[1,2,3,4,5,null,6,null,null,7]\n3", expected_output: "7", is_sample: false },
+{ problem_id: 80, input: "[100]\n0", expected_output: "100", is_sample: false },
+{ problem_id: 80, input: "[1,2,3]\n2", expected_output: "0", is_sample: false },
+{ problem_id: 80, input: "[1,2,null,3,null,4,null]\n2", expected_output: "3", is_sample: false },
+{ problem_id: 80, input: "[1,2,3,4,5,6,7]\n1", expected_output: "5", is_sample: false },
+{ problem_id: 80, input: "[1,2,3]\n3", expected_output: "0", is_sample: false },
+
+
+
+{ problem_id: 81, input: "[1,2,3,4,5,6,7]", expected_output: "[1,3,2,7,6,5,4]", is_sample: true },
+{ problem_id: 81, input: "[3,9,20,null,null,15,7]", expected_output: "[3,20,9,7,15]", is_sample: false },
+{ problem_id: 81, input: "[1]", expected_output: "[1]", is_sample: false },
+{ problem_id: 81, input: "[1,2,null,3,null,4]", expected_output: "[1,null,2,null,3,null,4]", is_sample: false },
+{ problem_id: 81, input: "[1,null,2,null,3]", expected_output: "[1,2,null,3]", is_sample: false },
+{ problem_id: 81, input: "[2,1,3]", expected_output: "[2,3,1]", is_sample: false },
+{ problem_id: 81, input: "[5,4,8,11,null,13,4,7,2,null,null,5,1]", expected_output: "[5,8,4,4,13,null,11,1,5,null,null,2,7]", is_sample: false },
+{ problem_id: 81, input: "[10,5,15,3,7,null,18]", expected_output: "[10,15,5,18,null,7,3]", is_sample: false },
+{ problem_id: 81, input: "[1,2,3,4,5,null,6,null,null,7]", expected_output: "[1,3,2,6,null,5,4,null,null,null,7]", is_sample: false },
+{ problem_id: 81, input: "[1,2,3,4,null,5,null]", expected_output: "[1,3,2,null,5,null,4]", is_sample: false },
+{ problem_id: 81, input: "[7,null,9,8,null,null,10]", expected_output: "[7,9,null,null,8,10]", is_sample: false },
+{ problem_id: 81, input: "[1,2,3,null,null,4,5]", expected_output: "[1,3,2,5,4]", is_sample: false },
+{ problem_id: 81, input: "[1,2,3,4,5,6,7,8,9]", expected_output: "[1,3,2,7,6,5,4,null,null,null,null,null,null,9,8]", is_sample: false },
+{ problem_id: 81, input: "[1,2,3,4,null,5,6]", expected_output: "[1,3,2,6,5,null,4]", is_sample: false },
+{ problem_id: 81, input: "[1,null,2,3,null,4,5]", expected_output: "[1,2,null,null,3,5,4]", is_sample: false },
+
+
+
+
+{ problem_id: 82, input: "[3,9,20,null,null,15,7]", expected_output: "24", is_sample: true },
+{ problem_id: 82, input: "[1,2,3,4,5]", expected_output: "4", is_sample: false },
+{ problem_id: 82, input: "[1,null,2,3]", expected_output: "3", is_sample: false },
+{ problem_id: 82, input: "[1,2,3,4,null,5,6]", expected_output: "9", is_sample: false },
+{ problem_id: 82, input: "[1,2,3,4,5,6,7,8,9]", expected_output: "14", is_sample: false },
+{ problem_id: 82, input: "[2,1,3]", expected_output: "1", is_sample: false },
+{ problem_id: 82, input: "[1]", expected_output: "0", is_sample: false },
+{ problem_id: 82, input: "[10,5,15,3,7,null,18]", expected_output: "3", is_sample: false },
+{ problem_id: 82, input: "[5,4,8,11,null,13,4,7,2,null,null,5,1]", expected_output: "25", is_sample: false },
+{ problem_id: 82, input: "[1,2,null,3,null,4,null]", expected_output: "4", is_sample: false },
+{ problem_id: 82, input: "[7,null,9,8,null,null,10]", expected_output: "0", is_sample: false },
+{ problem_id: 82, input: "[1,2,3,4,null,null,5]", expected_output: "4", is_sample: false },
+{ problem_id: 82, input: "[1,2,3,4,5,6,7]", expected_output: "10", is_sample: false },
+{ problem_id: 82, input: "[1,null,2,3,4]", expected_output: "3", is_sample: false },
+{ problem_id: 82, input: "[1,2,3,4,null,5,6,null,null,7]", expected_output: "11", is_sample: false },
+
+
+
 ];
 
 module.exports = { test_cases };

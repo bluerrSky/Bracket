@@ -288,7 +288,362 @@ Expression length <= 10^5
     difficulty: 'Hard',
     time_limit: 2,
     memory_limit: 524288
-  }
+  },
+
+
+
+  {
+  problem_id: 83,
+  category: 'Recursion',
+  title: 'Print Numbers from 1 to N',
+  description: `
+Given an integer n, print all numbers from 1 to n using recursion.
+
+### Input
+The input contains a single integer n.
+
+### Output
+Print numbers from 1 to n in increasing order, separated by spaces.
+
+### Constraints
+1 <= n <= 1000
+
+### Example
+**Input:**
+\`\`\`
+5
+\`\`\`
+
+**Output:**
+\`\`\`
+1 2 3 4 5
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 84,
+  category: 'Recursion',
+  title: 'Reverse a String',
+  description: `
+Given a string s, print its reverse using recursion.
+
+### Input
+The input contains a single string s.
+
+### Output
+Print the reversed string.
+
+### Constraints
+1 <= |s| <= 1000
+
+### Example
+**Input:**
+\`\`\`
+hello
+\`\`\`
+
+**Output:**
+\`\`\`
+olleh
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 85,
+  category: 'Recursion',
+  title: 'Sum of First N Natural Numbers',
+  description: `
+Given an integer n, find the sum of the first n natural numbers using recursion.
+
+### Input
+The input contains a single integer n.
+
+### Output
+Print the sum of the first n natural numbers.
+
+### Constraints
+1 <= n <= 10^5
+
+### Example
+**Input:**
+\`\`\`
+5
+\`\`\`
+
+**Output:**
+\`\`\`
+15
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 86,
+  category: 'Recursion',
+  title: 'Count Digits in a Number',
+  description: `
+Given an integer n, count the number of digits in it using recursion.
+
+### Input
+The input contains a single integer n.
+
+### Output
+Print the number of digits in n.
+
+### Constraints
+0 <= n <= 10^9
+
+### Example
+**Input:**
+\`\`\`
+12345
+\`\`\`
+
+**Output:**
+\`\`\`
+5
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 87,
+  category: 'Recursion',
+  title: 'Power of a Number',
+  description: `
+Given two integers a and b, find a^b (a raised to the power b) using recursion.
+
+### Input
+The input contains two integers a and b.
+
+### Output
+Print a^b.
+
+### Constraints
+0 <= a <= 10
+0 <= b <= 10
+
+### Example
+**Input:**
+\`\`\`
+2 5
+\`\`\`
+
+**Output:**
+\`\`\`
+32
+\`\`\`
+`,
+  difficulty: 'Easy',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+
+
+
+{
+  problem_id: 88,
+  category: 'Recursion',
+  title: 'Generate All Subsequences of a String',
+  description: `
+Given a string s, print all its subsequences using recursion.
+The subsequences can be printed in any order.
+
+### Input
+A single string s.
+
+### Output
+Print all subsequences of s, each on a new line.
+
+### Constraints
+1 <= |s| <= 10
+
+### Example
+**Input:**
+\`\`\`
+abc
+\`\`\`
+
+**Output:**
+\`\`\`
+a
+b
+c
+ab
+ac
+bc
+abc
+\`\`\`
+`,
+  difficulty: 'Medium',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 89,
+  category: 'Recursion',
+  title: 'Binary Strings Without Consecutive 1s',
+  description: `
+Given an integer n, print all binary strings of length n such that there are no consecutive 1s.
+
+### Input
+A single integer n.
+
+### Output
+Print all valid binary strings, one per line.
+
+### Constraints
+1 <= n <= 10
+
+### Example
+**Input:**
+\`\`\`
+3
+\`\`\`
+
+**Output:**
+\`\`\`
+000
+001
+010
+100
+101
+\`\`\`
+`,
+  difficulty: 'Medium',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 90,
+  category: 'Recursion',
+  title: 'Subset Sum',
+  description: `
+Given an array of integers and a target sum, print "YES" if there exists a subset whose sum equals the target, otherwise print "NO".
+Use recursion to explore all subsets.
+
+### Input
+The first line contains two integers n and target.
+The next line contains n integers.
+
+### Output
+Print "YES" or "NO".
+
+### Constraints
+1 <= n <= 20
+-10^3 <= arr[i] <= 10^3
+
+### Example
+**Input:**
+\`\`\`
+4 5
+1 2 3 4
+\`\`\`
+
+**Output:**
+\`\`\`
+YES
+\`\`\`
+`,
+  difficulty: 'Medium',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 91,
+  category: 'Recursion',
+  title: 'N-Queens Count',
+  description: `
+You are given an integer n. Find the number of possible ways to place n queens on an n×n chessboard so that no two queens attack each other.
+
+### Input
+A single integer n.
+
+### Output
+Print the number of valid arrangements.
+
+### Constraints
+1 <= n <= 10
+
+### Example
+**Input:**
+\`\`\`
+4
+\`\`\`
+
+**Output:**
+\`\`\`
+2
+\`\`\`
+`,
+  difficulty: 'Medium',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
+
+{
+  problem_id: 92,
+  category: 'Recursion',
+  title: 'Generate Balanced Parentheses',
+  description: `
+Given an integer n, generate all combinations of well-formed parentheses using recursion.
+
+### Input
+A single integer n.
+
+### Output
+Print all valid combinations, one per line.
+
+### Constraints
+1 <= n <= 8
+
+### Example
+**Input:**
+\`\`\`
+3
+\`\`\`
+
+**Output:**
+\`\`\`
+((()))
+(()())
+(())()
+()(())
+()()()
+\`\`\`
+`,
+  difficulty: 'Medium',
+  time_limit: 1,
+  memory_limit: 524288
+},
+
 ];
 
 module.exports = { problems };

@@ -1,27 +1,21 @@
-function generatePermutationsString(n) {
-  const nums = Array.from({ length: n }, (_, i) => i + 1);
+function generateParentheses(n) {
   const result = [];
 
-  function backtrack(start) {
-    if (start === n) {
-      result.push(nums.join(" "));
+  function backtrack(curr, open, close) {
+    if (curr.length === n * 2) {
+      result.push(curr);
       return;
     }
-    for (let i = start; i < n; i++) {
-      [nums[start], nums[i]] = [nums[i], nums[start]];
-      backtrack(start + 1);
-      [nums[start], nums[i]] = [nums[i], nums[start]];
-    }
+
+    if (open < n) backtrack(curr + "(", open + 1, close);
+    if (close < open) backtrack(curr + ")", open, close + 1);
   }
 
-  backtrack(0);
-
-  // Create final string with literal \n separators
-  const outputString = result.join("\\n"); 
-
-  // Wrap it with the input for display or DB
-  return `"${outputString}"`;
+  backtrack("", 0, 0);
+  return result.join("\\n"); // <-- join with literal "\n"
 }
 
-// Example:
-console.log(generatePermutationsString(7));
+// Example usage:
+const input = 8;
+const output = generateParentheses(input);
+console.log(output);
