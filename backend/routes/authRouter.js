@@ -1,24 +1,23 @@
 // routes/indRouter.js
 const express = require('express');
 const router = express.Router();
-const {
-    getInd,
-    logAuth,
-    signAuth,
-    checkAuth,
-    validateLogin,
-    validateSignup,
-    
-    
-} = require('../controller/authController');
 
-// Auth
-router.get('/', getInd);
-router.post('/signup', validateSignup,signAuth);
-router.post('/login',validateLogin, logAuth);
-router.get('/check-auth', checkAuth);
+const authController = require('../controller/authController');
 
-// Problems
+// Auth 
+router.get('/', authController.getInd);
+router.post(
+    '/signup', 
+    authController.validateSignup, 
+    authController.registerUser 
+);
+router.post(
+    '/login', 
+    authController.validateLogin, 
+    authController.logAuth
+);
+router.get('/check-auth', authController.checkAuth);
 
+router.post('/verify-email', authController.verifyEmail);
 
 module.exports = router;

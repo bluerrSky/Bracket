@@ -4,14 +4,19 @@ const pool = require('../db/pool');
 const sql = `
     drop table if exists users cascade;
     create table users(
-    user_id int primary key GENERATED ALWAYS AS IDENTITY,
-    username varchar(60) unique,
-    email varchar(100) unique,
-    password text,
-    proficiency varchar(20) default 'Novice',
-    problems_solved int default 0,
-    rating int default 0
-    );
+        user_id int primary key GENERATED ALWAYS AS IDENTITY,
+        username varchar(60) unique,
+        email varchar(100) unique,
+        password text,
+        proficiency varchar(20) default 'Novice',
+        problems_solved int default 0,
+        rating int default 0,
+        
+        -- New columns for email verification --
+        is_verified BOOLEAN DEFAULT FALSE,
+        verification_otp TEXT,
+        otp_expires_at TIMESTAMP
+);
 `
 const sql1=`
     DROP TABLE IF EXISTS user_problem CASCADE;
