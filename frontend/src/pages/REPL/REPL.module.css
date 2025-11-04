@@ -1,25 +1,22 @@
 .REPLContainer{
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
     
     /* height: 100vh; */
 }
 
 .REPLContainer > *{
-    flex: auto;
-    min-width: 600px;
-}
 
+}
+/* 
 .problemDesc{
     width: max(600px, 35%);
-    /* grid-area: 1/1/1/2; */
-    /* background-color: red; */
 }
 
 .codeEditor{
-    width: max(600px, 65%);;
-}
-
+    width: max(600px, 65%);
+} s
+  */
 
 /* In frontend/src/pages/REPL/REPL.module.css */
 
