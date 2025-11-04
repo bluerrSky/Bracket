@@ -5,7 +5,9 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "db:setup": "node setup/users.js && node setup/problems.js",
+    "db:setup": "node setup/users.js && node setup/problems.js && node setup/adaptiveTables.js",
+    "db:populate": "node setup/populate_db.js && node setup/populateTutorials.js",
+    "ai:prereqs": "node setup/aiPrereqsGenerator",
     "db:test": "node test_db.js"
   },
   "dependencies": {
@@ -18,6 +20,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "express-validator": "^7.3.0",
+    "fs": "^0.0.1-security",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.12.0",

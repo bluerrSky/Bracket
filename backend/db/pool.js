@@ -12,8 +12,8 @@ const connectionConfig = process.env.DATABASE_URL
     : {
         // Local
         host: process.env.DB_HOST,
-        user: 'gagan',
-        database: 'bracketdb',
+        user: 'dummy',
+        database: 'project',
         password: 'pass',
         port: parseInt(process.env.DB_PORT, 10)
         
