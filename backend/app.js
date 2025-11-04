@@ -1,8 +1,6 @@
-console.log(`===== SERVER STARTING =====`);
-console.log(`Server is running in [${process.env.NODE_ENV}] mode.`);
-console.log(`===========================`);
-
 // app.js
+console.log(`[SERVER START] NODE_ENV is: '${process.env.NODE_ENV}'`); // For verifying production mode
+
 const express = require('express');
 require('dotenv').config();
 const http = require('http');
@@ -10,6 +8,10 @@ const session = require('express-session');
 const passport = require('./config/passport'); // your passport config
 const cors = require('cors');
 const { Server } = require('socket.io');
+
+// --- 1. IMPORTS FOR SESSION STORE ---
+const pgSession = require('connect-pg-simple')(session);
+const pool = require('./db/pool'); // Import your existing database pool
 
 // routers
 const authRouter = require('./routes/authRouter');
@@ -24,7 +26,10 @@ const server = http.createServer(app);
 const isProd = process.env.NODE_ENV === 'production';
 
 // trust proxy when behind a TLS-terminating proxy (Render, Heroku, etc.)
-if (isProd) app.set('trust proxy', 1);
+if (isProd) {
+    console.log("Trusting proxy in production.");
+    app.set('trust proxy', 1);
+}
 
 // --- CORS (allow credentials) ---
 // Add any client origins you use here exactly
@@ -43,6 +48,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 // TEMP DEBUG - add right after app.use(express.json()) and before app.use(sessionMiddleware)
 app.use((req, res, next) => {
   console.log('===== REQ START =====');
@@ -58,17 +64,25 @@ app.use((req, res, next) => {
 });
 
 
-// --- Session middleware (shared with socket.io) ---
+// --- 2. CONFIGURE PG SESSION STORE ---
+const sessionStore = new pgSession({
+  pool: pool, // Use your existing database pool
+  tableName: 'user_sessions', // This table will be created automatically
+  createTableIfMissing: true,
+});
+
+// --- 3. SESSION MIDDLEWARE (USING NEW STORE) ---
 const sessionMiddleware = session({
+  store: sessionStore, // Tell express-session to use Postgres
   secret: process.env.SESSION_SECRET || process.env.SECRET || 'dev_fallback_secret',
   resave: false,
   saveUninitialized: false,
-  proxy: isProd,
+  proxy: isProd, // Required for 'secure: true' cookies behind a proxy
   cookie: {
     httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000, // 1 day
     secure: isProd,              // true in production (HTTPS), false for local dev
-    sameSite: isProd ? 'none' : 'lax' // none+secure in prod (for cross-site), lax locally
+    sameSite: isProd ? 'none' : 'lax' // 'none' for cross-site prod, 'lax' for local
   }
 });
 
@@ -76,6 +90,7 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+
 // TEMP DEBUG - after passport.session()
 app.use((req, res, next) => {
   console.log('--- POST-PASSPORT MIDDLEWARE ---');
@@ -88,7 +103,7 @@ app.use((req, res, next) => {
   } catch (e) {
     console.log('[DBG2] session.passport (error stringify)');
   }
-  console.log('[DBG2] req.user present?:', !!req.user, 'user id:', req.user ? (req.user.user_id || req.user.id) : null);
+  console.log('[DBGD2] req.user present?:', !!req.user, 'user id:', req.user ? (req.user.user_id || req.user.id) : null);
   next();
 });
 
@@ -114,7 +129,7 @@ io.use(wrap(passport.session()));
 io.use((socket, next) => {
   const sessPresent = !!socket.request.session;
   const userPresent = !!socket.request.user;
-  console.log('[Socket Auth] session?', sessPresent, 'user?', userPresent);
+  console.log(`[Socket Auth] session? ${sessPresent}, user? ${userPresent}, user_id: ${socket.request.user ? socket.request.user.user_id : 'N/A'}`);
   next();
 });
 
