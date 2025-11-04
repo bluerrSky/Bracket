@@ -1,14 +1,54 @@
 import styles from "./Navbar.module.css"
-import DarkThemeIcon from "../Icons/darkThemeIcon"
+// import DarkThemeIcon from "../Icons/darkThemeIcon" // (Keep if you use it)
 import { useAuth } from "../../context/AuthContext"; 
-import { Link } from "react-router-dom"
-// Import the new hook
+import { Link, useNavigate } from "react-router-dom" // Import useNavigate
+import { useMutation } from "@tanstack/react-query"; // Import useMutation
 import useOnlineCounter from "../../hooks/useOnlineCounter"
 
+// Get the API URL from environment variables, just like in Signup.jsx
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
+
+// API function to call the /logout endpoint
+const logoutUser = async () => {
+    const response = await fetch(`${API_BASE_URL}/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: 'include',
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.message || "Logout failed.");
+    }
+    return data;
+};
+
+
 export default function Navbar(){
-    const { user } = useAuth(); 
-    // Get the dynamic count from the hook
+    // Get both 'user' and 'logout' function from the context
+    const { user, logout } = useAuth(); 
+    const navigate = useNavigate(); 
     const onlineCount = useOnlineCounter();
+
+    // Create the mutation for logging out
+    const logoutMutation = useMutation({
+        mutationFn: logoutUser,
+        onSuccess: () => {
+            console.log("Logout successful");
+            logout(); // Clear user from global state
+            navigate('/'); // Redirect to homepage
+        },
+        onError: (error) => {
+            console.error("Logout failed:", error.message);
+            // As a fallback, log the user out on the client anyway
+            logout();
+            navigate('/');
+        }
+    });
+
+    // Click handler for the logout button
+    const handleLogout = () => {
+        logoutMutation.mutate();
+    };
 
     return (
         <div className={styles.navbar}>
@@ -23,11 +63,7 @@ export default function Navbar(){
             <div className={styles.centerNav}>
             </div>
             <div className={styles.rightNav}>
-                {/* {user && (
-                <div>Battle</div>
-                )} */}
                 
-                {/* Use the dynamic onlineCount here */}
                 <div className={styles.totalOnline}>
                     {onlineCount} online
                 </div>
@@ -35,13 +71,30 @@ export default function Navbar(){
                 {/* <div className={styles.themeToggle}>
                     <DarkThemeIcon/>
                 </div> */}
-                {user && (
-                    <div className={styles.profileButton}>
-                        <div className={styles.avatar}></div>
-                        <div className={styles.name}>
-                            {user.username} {/* Display the dynamic username */}
+                
+                {/* Show Profile + Logout button if user is logged in,
+                  OR a Login link if they are not.
+                */}
+                {user ? (
+                    <>
+                        <div className={styles.profileButton}>
+                            <div className={styles.avatar}></div>
+                            <div className={styles.name}>
+                                {user.username}
+                            </div>
                         </div>
-                    </div>
+                        <button 
+                            onClick={handleLogout} 
+                            disabled={logoutMutation.isPending}
+                            className={styles.logoutButton} // You'll need to add this style
+                        >
+                            {logoutMutation.isPending ? "..." : "Logout"}
+                        </button>
+                    </>
+                ) : (
+                    <Link to="/login" className={styles.loginButton}> {/* You'll need to style this */}
+                        Login / Sign Up
+                    </Link>
                 )}
             </div>
         </div>

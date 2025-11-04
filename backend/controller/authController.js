@@ -4,6 +4,68 @@ const pool = require('../db/pool');
 const { body, validationResult, matchedData } = require('express-validator');
 
 
+
+
+
+// Add this middleware function in authController.js
+
+/**
+ * Middleware to clear any existing (potentially stale) session
+ * before attempting a new login or signup.
+ */
+const preAuth = (req, res, next) => {
+    // If there's no user on the request, just continue.
+    if (!req.user) {
+        return next();
+    }
+
+    // If there is a user, it's stale. Log them out first.
+    req.logout((err) => {
+        if (err) {
+            console.error("Error during pre-auth logout:", err);
+            return next(err);
+        }
+        
+        // req.logout() clears the user from session, but we should
+        // destroy the stale session entirely.
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Pre-auth session destroy error:", err);
+                // Don't block the request, just log it.
+            }
+            // Now that the old session is gone, proceed to login/signup.
+            next();
+        });
+    });
+};
+
+// ... (rest of your authController.js file) ...
+const logOut = (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            console.error("Logout error:", err);
+            return next(err);
+        }
+
+        // Destroy the session in the database
+        req.session.destroy((err) => {
+            if (err) {
+                console.error("Session destroy error on logout:", err);
+                return res.status(500).json({ success: false, message: "Logout failed." });
+            }
+
+            // Clear the cookie on the client side.
+            // 'connect.sid' is the default session cookie name.
+            res.clearCookie('connect.sid'); 
+            return res.status(200).json({ success: true, message: "Logout successful" });
+        });
+    });
+};
+
+
+
+
+
 function getInd(req, res) {
     return res.status(200).json({ message: 'Hi', status: 'success' });
 }
@@ -161,4 +223,6 @@ module.exports = {
     checkAuth,
     validateLogin,
     validateSignup,
+    preAuth,
+    logOut
 };
