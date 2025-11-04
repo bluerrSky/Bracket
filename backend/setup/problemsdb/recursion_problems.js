@@ -202,7 +202,7 @@ Print the sum of the array elements.
     title: 'Count Paths in Grid',
     description: `
 Given a grid of size n×m, count the number of ways to get from the top-left corner to the bottom-right corner moving only down or right using recursion.
-
+You can try memoization in case of TLE.
 ### Input
 Two integers n and m.
 
@@ -223,7 +223,7 @@ Print the number of such paths.
 \`\`\`
 `,
     difficulty: 'Medium',
-    time_limit: 1,
+    time_limit: 2,
     memory_limit: 524288
   },
 

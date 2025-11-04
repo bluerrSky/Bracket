@@ -2,41 +2,52 @@ const axios = require('axios');
 const url = process.env.JUDGE0_URL;
 const pool = require('../db/pool');
 
-// --- HELPER 1: User Topic Mastery ---
+// --- HELPER 1: User Topic Mastery (UPDATED) ---
 async function updateUserMastery(client, userId, problemId, verdict) {
     try {
-        const probRes = await client.query(`SELECT category FROM problems WHERE problem_id = $1`, [problemId]);
+        // 1. Fetch category AND difficulty
+        const probRes = await client.query(
+            `SELECT category, difficulty FROM problems WHERE problem_id = $1`, 
+            [problemId]
+        );
         if (probRes.rows.length === 0) return;
-        const topic = probRes.rows[0].category;
+        
+        const { category, difficulty } = probRes.rows[0];
 
+        // 2. Tuned score changes
         let scoreChange = 0;
         let solvedChange = 0;
         let attemptedChange = 1;
 
         if (verdict === 'Accepted') {
-            scoreChange = 10;
+            // Tuned for a smaller problem bank
+            if (difficulty === 'Easy') scoreChange = 8;
+            else if (difficulty === 'Medium') scoreChange = 10;
+            else if (difficulty === 'Hard') scoreChange = 15;
+            
             solvedChange = 1;
         } else if (verdict === 'Wrong Answer') {
-            scoreChange = -2;
+            scoreChange = -2; // Small penalty
         } else {
-            scoreChange = -1;
+            scoreChange = -1; // e.g., Compile Error
         }
         
         const masterySql = `
             INSERT INTO user_topic_mastery (user_id, topic_name, mastery_score, problems_attempted, problems_solved)
             VALUES ($1, $2, $3, $4, $5) ON CONFLICT (user_id, topic_name) DO UPDATE SET
-                mastery_score = user_topic_mastery.mastery_score + $3,
+                mastery_score = GREATEST(0, user_topic_mastery.mastery_score + $3), -- Prevents negative score
                 problems_attempted = user_topic_mastery.problems_attempted + $4,
                 problems_solved = user_topic_mastery.problems_solved + $5;
         `;
-        await client.query(masterySql, [userId, topic, scoreChange, attemptedChange, solvedChange]);
+        await client.query(masterySql, [userId, category, scoreChange, attemptedChange, solvedChange]);
+
     } catch (err) {
         console.error('Error updating user mastery:', err.message);
         throw err; // Propagate error to rollback transaction
     }
 }
 
-// --- HELPER 2: Log the Submission ---
+// --- HELPER 2: Log the Submission (Unchanged) ---
 async function logSubmission(client, { userId, problem_id, language_id, source_code, verdict, token }) {
     try {
         const sql = `
@@ -50,7 +61,7 @@ async function logSubmission(client, { userId, problem_id, language_id, source_c
     }
 }
 
-// --- HELPER 3: Update User Problem Status ---
+// --- HELPER 3: Update User Problem Status (Unchanged) ---
 async function updateUserProblemStatus(client, userId, problemId, verdict) {
     try {
         const isSolved = verdict === 'Accepted';
@@ -69,7 +80,7 @@ async function updateUserProblemStatus(client, userId, problemId, verdict) {
     }
 }
 
-// --- HELPER 4: Update Learning Path ---
+// --- HELPER 4: Update Learning Path (Unchanged) ---
 async function updateLearningPathStatus(client, userId, problemId, verdict) {
     try {
         if (verdict === 'Accepted') {
@@ -87,6 +98,7 @@ async function updateLearningPathStatus(client, userId, problemId, verdict) {
 }
 
 
+// --- Main newSub Function (Unchanged) ---
 const headers = {
     'content-type': 'application/json',
     'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
@@ -121,7 +133,6 @@ async function newSub(req, res) {
             return res.status(404).json({ error: 'Problem or test cases not found' });
         }
         
-        // --- THIS WAS THE MISSING BLOCK OF CODE ---
         const submissions = testCases.map(tc => {
             return {
                 source_code: sc,
@@ -132,7 +143,6 @@ async function newSub(req, res) {
                 memory_limit: memory_limit
             }
         });
-        // --- END OF FIX ---
         
         const response = await axios.post(`${url}/submissions/batch?base64_encoded=true&wait=false`, { submissions }, { headers });
         let tokens = response.data.map(x => x.token);
@@ -177,6 +187,7 @@ async function newSub(req, res) {
         client = await pool.connect();
         try {
             await client.query('BEGIN');
+            // --- ALL HELPERS ARE CALLED HERE ---
             await updateUserMastery(client, userId, problem_id, verdict);
             await logSubmission(client, { userId, problem_id, language_id, source_code, verdict, token: tokens.split(',')[0] });
             await updateUserProblemStatus(client, userId, problem_id, verdict);

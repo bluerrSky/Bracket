@@ -1,11 +1,55 @@
 const pool = require('../db/pool');
-const { problems } = require('./problemsdb/graphs_problems');
-const { test_cases } = require('./problemsdb/graphs_test_cases');
+const fs = require('fs');
+const path = require('path');
+
+
+async function loadProblemFiles() {
+    const problemsDir = path.join(__dirname, 'problemsdb');
+    const files = fs.readdirSync(problemsDir);
+
+    let allProblems = [];
+    let allTestCases = [];
+
+    
+    const categories = {};
+
+    for (const file of files) {
+        const match = file.match(/^(.+?)_(problems|test_cases)\.js$/);
+        if (match) {
+            const [ , category, type ] = match;
+            if (!categories[category]) categories[category] = {};
+            categories[category][type] = file;
+        }
+    }
+
+    for (const [category, files] of Object.entries(categories)) {
+        console.log(`\nLoading category: ${category}`);
+
+        if (files.problems) {
+            const { problems } = require(path.join(problemsDir, files.problems));
+            
+            allProblems = allProblems.concat(problems);
+        }
+
+        if (files.test_cases) {
+            const { test_cases } = require(path.join(problemsDir, files.test_cases));
+            
+            allTestCases = allTestCases.concat(test_cases);
+        }
+    }
+
+    
+
+    return { allProblems, allTestCases };
+}
 
 async function main() {
     let client;
     
     try {
+
+        const { allProblems: problems, allTestCases: test_cases } = await loadProblemFiles();
+
         client = await pool.connect();
         
         await client.query('BEGIN'); 
