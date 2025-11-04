@@ -21,24 +21,30 @@ async function main() {
         }
         
         
+        // A more robust prompt for aiPrereqsGenerator.js
+
         const prompt = `
-            You are an expert Computer Science curriculum designer.
-            Here is a list of all available DSA topics:
+            You are a JSON-only API. You are an expert Computer Science curriculum designer.
+            Your task is to define the prerequisite relationships between the provided topics.
+            A prerequisite is a topic that *must* be understood before logically moving on to the next.
+
+            HERE IS THE *ONLY* LIST OF VALID TOPICS:
             ${JSON.stringify(allTopics)}
 
-            Define the prerequisite relationships between them. A prerequisite is a topic that *must* be understood before logically moving on to the next.
+            RULES:
+            1. Return your answer *only* as a single, valid JSON array of objects.
+            2. Do NOT add any conversational text, explanations, or markdown.
+            3. Each object must have a "topic" key and a "prerequisite" key.
+            4. *Only* use topic names from the list provided above.
+            5. Be logical. For example, "DP" requires "Recursion".
+            6. A topic can have multiple prerequisites. Create a separate object for each dependency.
+            7. If a topic (like "Arrays") has NO prerequisites from the list, do NOT create an entry for it.
 
-            Return your answer *only* as a valid JSON array of objects, with no other text. Each object must have a "topic" key and a "prerequisite" key.
-
-            - A topic can have multiple prerequisites (create a separate object for each).
-            - Only use topics from the list provided.
-            - Be logical. For example, "DP" requires "Recursion".
-
-            Example format:
+            EXAMPLE FORMAT:
             [
-              {"topic": "DP", "prerequisite": "Recursion"},
-              {"topic": "DP", "prerequisite": "Arrays"},
-              {"topic": "Graphs", "prerequisite": "Arrays"}
+            {"topic": "DP", "prerequisite": "Recursion"},
+            {"topic": "DP", "prerequisite": "Arrays"},
+            {"topic": "Graphs", "prerequisite": "Arrays"}
             ]
         `;
 

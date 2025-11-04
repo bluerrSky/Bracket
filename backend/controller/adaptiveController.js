@@ -7,18 +7,10 @@ const AImodel=process.env.AI_MODEL;
 const googleApiKey = process.env.GOOGLE_PSE_KEY;
 const searchEngineId = process.env.GOOGLE_PSE_CX;
 
-
-/**
- * Searches YouTube 
- * @param {string} searchTerm 
- * @returns {Promise<Array>} 
- */
+// --- Helper Functions (searchYouTube, searchGoogle) ... (Unchanged) ---
 async function searchYouTube(searchTerm) {
     try {
-        
         const searchResults = await ytsr(searchTerm, { pages: 1 });
-        
-       
         return searchResults.items
             .filter(item => item.type === 'video') 
             .slice(0, 3) 
@@ -33,39 +25,30 @@ async function searchYouTube(searchTerm) {
     }
 }
 
-
-/**
- * Searches Google 
- * @param {string} searchTerm 
- * @returns {Promise<Array>} 
- */
 async function searchGoogle(searchTerm) {
     if (!googleApiKey || !searchEngineId) {
-        console.warn("Google PSE keys (GOOGLE_PSE_KEY, GOOGLE_PSE_CX) are not set in .env. Skipping article search.");
+        console.warn("Google PSE keys are not set. Skipping article search.");
         return [];
     }
-    
     const url = `https://www.googleapis.com/customsearch/v1?key=${googleApiKey}&cx=${searchEngineId}&q=${searchTerm}&num=3`;
-    
     try {
         const response = await axios.get(url);
         if (!response.data.items) {
-            console.log(`Google PSE: No results for "${searchTerm}"`);
-            return []; // No results found
+            return [];
         }
-        
-
         return response.data.items.map(item => ({
             title: item.title,
             url: item.link
         }));
     } catch (err) {
-        console.error(`Google PSE Error for "${searchTerm}":`, err.response ? err.response.data.error.message : err.message);
+        console.error(`Google PSE Error:`, err.response ? err.response.data.error.message : err.message);
         return []; 
     }
 }
+// --- End Helper Functions ---
 
 
+// --- getAIHint (UPDATED) ---
 const getAIHint = async (req, res) => {
     const { problemId, userCode } = req.body;
     const userId = req.user?.user_id; 
@@ -86,16 +69,16 @@ const getAIHint = async (req, res) => {
             [problemId]
         );
         if (problemResult.rows.length === 0) { 
-            console.warn(`[getAIHint] Problem not found: ${problemId}`);
             return res.status(404).json({ success: false, message: "Problem not found." }); 
         }
         const problem = problemResult.rows[0];
 
         // ADAPTIVE LOGIC 
-        let userContext = "User is a beginner."; // Default context
+        let userContext = "User is a beginner."; 
+        let submissionHistory = "None.";
         
         if (userId) {
-            // 2. Get User's Mastery Score for this topic
+            // 1. Get User's Mastery Score
             const masteryRes = await pool.query(
                 `SELECT mastery_score FROM user_topic_mastery WHERE user_id = $1 AND topic_name = $2`,
                 [userId, problem.category]
@@ -103,41 +86,48 @@ const getAIHint = async (req, res) => {
             
             if (masteryRes.rows.length > 0) {
                 const score = masteryRes.rows[0].mastery_score;
-                // 3. Create a dynamic context for the AI
-                if (score > 50) {
-                    userContext = `User is advanced (mastery ${score}). They are likely stuck on a subtle edge case or optimization.`;
-                } else if (score > 20) {
-                    userContext = `User is intermediate (mastery ${score}). They likely understand the basics but are missing a key part of the algorithm.`;
-                } else {
-                    userContext = `User is a beginner (mastery ${score}). They need a simple, core-concept-level hint.`;
-                }
-            } else {
-                 userContext = "User is a beginner (no mastery score for this topic yet).";
+                // Use new tuned thresholds for context
+                if (score > 40) userContext = `User is advanced (mastery ${score}).`;
+                else if (score > 15) userContext = `User is intermediate (mastery ${score}).`;
+                else userContext = `User is a beginner (mastery ${score}).`;
+            }
+
+            // 2. Get User's recent failed submissions for this problem
+            const historyRes = await pool.query(
+                `SELECT status FROM submissions 
+                 WHERE user_id = $1 AND problem_id = $2 AND status != 'Accepted' 
+                 ORDER BY submitted_at DESC LIMIT 3`,
+                [userId, problemId]
+            );
+
+            if (historyRes.rows.length > 0) {
+                submissionHistory = historyRes.rows.map(row => `Status: ${row.status}`).join('\n');
             }
         }
         console.log(`[getAIHint] 🧠 User Context: ${userContext}`);
         
-
-        // 4. Inject the context into the prompt
+        // 3. Inject context and history into the prompt
         const prompt = `
             Task: Provide a short, conceptual hint for a user stuck on a programming problem,
-            tailored to their skill level.
+            tailored to their skill level and past failures.
 
             User Skill Level: ${userContext}
 
             Problem Title: ${problem.title}
             Problem Description: ${problem.description}
-            User's Code:
+            
+            User's Current Code:
             \`\`\`
             ${userCode}
             \`\`\`
+            
+            User's Previous Failed Attempts (for context):
+            ${submissionHistory}
+
             Rules:
             - Provide a single, short, conceptual hint.
-            - Based on their skill level, give a targeted hint.
-            - For beginners: Give a simple, foundational hint.
-            - For advanced users: Give a more subtle hint about edge cases, complexity, or a specific trick.
-            - Use Markdown formatting.
-            - Use $...$ for inline LaTeX and $$...$$ for block LaTeX.
+            - **Crucially**: If the user is getting a 'Time Limit Exceeded', give a hint about *optimization* or *time complexity*.
+            - If the user is getting a 'Wrong Answer', hint about an *edge case* or *flawed logic*.
             - DO NOT give away the final answer or write code.
             - Keep the hint to one or two sentences.
         `;
@@ -149,6 +139,23 @@ const getAIHint = async (req, res) => {
         const hintText = response.text();
         
         console.log("[getAIHint] AI responded successfully.");
+        
+        // 4. --- APPLY "HINT COST" ---
+        if (userId) {
+            try {
+                await pool.query(
+                    `UPDATE user_topic_mastery 
+                     SET mastery_score = GREATEST(0, mastery_score - 1) 
+                     WHERE user_id = $1 AND topic_name = $2`,
+                    [userId, problem.category]
+                );
+                console.log(`[getAIHint] Applied -1 hint cost to ${problem.category} for user ${userId}`);
+            } catch (err) {
+                console.error("Error applying hint cost:", err.message);
+                // Don't block hint, just log error
+            }
+        }
+        
         res.status(200).json({ success: true, hint: hintText });
 
     } catch (error) {
@@ -158,25 +165,22 @@ const getAIHint = async (req, res) => {
 };
 
 
+// --- getAIResources (Unchanged) ---
 const getAIResources = async (req, res) => {
     const { problemId } = req.body;
     console.log(`[getAIResources] 🚀 POST /get-resources for problem ${problemId}`);
     
-   
     let genAI;
     try {
         genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     } catch (e) {
-        console.error("[getAIResources] 🚨 Failed to initialize Gemini AI:", e.message);
         return res.status(500).json({ success: false, message: "AI service is misconfigured." });
     }
     
     let aiResponseText = "";
     try {
-        //STEP 1: Get Concepts from AI
         const problemResult = await pool.query(`SELECT title, category FROM problems WHERE problem_id = $1`, [problemId]);
         if (problemResult.rows.length === 0) { 
-            console.warn(`[getAIResources] ❌ Problem not found: ${problemId}`);
             return res.status(404).json({ success: false, message: "Problem not found." }); 
         }
         const problem = problemResult.rows[0];
@@ -210,33 +214,20 @@ const getAIResources = async (req, res) => {
         }
         const resources = JSON.parse(jsonText);
         console.log("[getAIResources] Parsed AI concepts:", resources);
-
-        // STEP 2: Get REAL Links & Videos using Helpers 
+ 
         console.log("[getAIResources] 🔍 Fetching real links AND videos for concepts...");
 
         const enhancedResources = await Promise.all(
             resources.map(async (resource) => {
                 const searchTerm = `${resource.concept} algorithm tutorial`;
-
-                // Run both searches in parallel and wait for both to settle
                 const [webResult, videoResult] = await Promise.allSettled([
                     searchGoogle(searchTerm), 
                     searchYouTube(searchTerm)
                 ]);
 
-                // Process Article Results
                 const links = (webResult.status === 'fulfilled') ? webResult.value : [];
-                if (webResult.status === 'rejected') {
-                     console.warn(`Failed to fetch web links for ${resource.concept}`);
-                }
-
-                // Process Video Results
                 const videos = (videoResult.status === 'fulfilled') ? videoResult.value : [];
-                if (videoResult.status === 'rejected') {
-                     console.warn(`Failed to fetch videos for ${resource.concept}`);
-                }
 
-                //combined object
                 return { ...resource, links, videos };
             })
         );
@@ -247,9 +238,7 @@ const getAIResources = async (req, res) => {
     } catch (error) {
         console.error("Error getting AI resources:", error.message);
         if (error instanceof SyntaxError) {
-             console.error("RAW AI RESPONSE (Failed to parse)");
-             console.error(aiResponseText);
-            
+             console.error("RAW AI RESPONSE (Failed to parse)", aiResponseText);
              return res.status(500).json({ success: false, message: "Failed to understand AI's response." });
         }
         res.status(500).json({ success: false, message: "Failed to find resources." });
@@ -257,31 +246,25 @@ const getAIResources = async (req, res) => {
 };
 
 
-
-
+// --- submitOnboarding (Unchanged, but good) ---
 const submitOnboarding = async (req, res) => {
     const userId = req.user?.user_id;
-    console.log(`[submitOnboarding] POST /onboarding for User ${userId}`);
-
     if (!userId) {
-        console.warn("[submitOnboarding] User not authenticated.");
         return res.status(401).json({ success: false, message: "User not authenticated." });
     }
 
     const assessments = req.body.assessments; 
-    console.log("[submitOnboarding] Received assessments:", assessments);
     
     if (!assessments || !Array.isArray(assessments)) {
-        console.warn("[submitOnboarding] Invalid data.");
         return res.status(400).json({ success: false, message: "Invalid assessment data." });
     }
 
-    const scoreMap = { 'None': 0, 'Easy': 20, 'Moderate': 40, 'Hard': 60 };
+    // Map onboarding (Easy/Moderate) to our new tuned scores
+    const scoreMap = { 'None': 0, 'Easy': 10, 'Moderate': 25, 'Hard': 45 };
     let client;
     try {
         client = await pool.connect();
         await client.query('BEGIN');
-        console.log("[submitOnboarding] Saving mastery scores to DB...");
         for (const assessment of assessments) {
             const score = scoreMap[assessment.level] || 0;
             await client.query(`
@@ -294,7 +277,7 @@ const submitOnboarding = async (req, res) => {
         await client.query('COMMIT');
         console.log("[submitOnboarding] Mastery scores saved. Forwarding to generate path...");
         
-        return generateLearningPath(req, res); // Call the "Brain"
+        return generateLearningPath(req, res); // Call the path generator
         
     } catch (err) {
         if (client) await client.query('ROLLBACK');
@@ -306,16 +289,13 @@ const submitOnboarding = async (req, res) => {
 };
 
 
-
+// --- submitTutorialFeedback (Unchanged, but good) ---
 const submitTutorialFeedback = async (req, res) => {
     const userId = req.user?.user_id;
-    console.log(`[submitTutorialFeedback] POST /tutorial-feedback for User ${userId}`);
     if (!userId) {
-        console.warn("[submitTutorialFeedback] User not authenticated.");
         return res.status(401).json({ success: false, message: "User not authenticated." });
     }
     const { topic_name, rating, confused_subtopic } = req.body;
-    console.log(`[submitTutorialFeedback] Feedback: ${topic_name}, Rating: ${rating}, Confused: ${confused_subtopic}`);
     let client;
     let aiResponseText = ""; 
 
@@ -327,10 +307,8 @@ const submitTutorialFeedback = async (req, res) => {
             ON CONFLICT (user_id, topic_name)
             DO UPDATE SET status = 'Completed', satisfaction_rating = $3
         `, [userId, topic_name, rating]);
-        console.log("[submitTutorialFeedback] Saved feedback to DB.");
 
         if (rating > 3) { 
-            console.log("[submitTutorialFeedback] User satisfied. Fetching easy problems...");
             const problemsRes = await pool.query(
                 `SELECT problem_id, title, difficulty FROM problems WHERE category = $1 AND difficulty = 'Easy' LIMIT 3`, 
                 [topic_name]
@@ -343,12 +321,10 @@ const submitTutorialFeedback = async (req, res) => {
             });
         }
 
-        console.log("[submitTutorialFeedback] User confused. Calling AI for remediation...");
         let genAI;
         try {
             genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
         } catch (e) {
-            console.error("[submitTutorialFeedback] Failed to initialize Gemini AI:", e.message);
             return res.status(500).json({ success: false, message: "AI service is misconfigured." });
         }
 
@@ -370,7 +346,7 @@ const submitTutorialFeedback = async (req, res) => {
             }
             
             RESPONSE FORMAT:
-            You must return *only* a single valid JSON object. Do not add markdown or conversational text.
+            You must return *only* a single valid JSON object.
             {
               "explanation": "Your clear, concise explanation here...",
               "problem_ids": [101, 102]
@@ -381,20 +357,17 @@ const submitTutorialFeedback = async (req, res) => {
         const result = await model.generateContent(prompt);
         const response = await result.response;
         aiResponseText = response.text();
-        console.log("[submitTutorialFeedback] Raw AI Response:\n", aiResponseText);
 
         let jsonText = aiResponseText;
         if (jsonText.startsWith("```json")) {
             jsonText = jsonText.match(/```json\s*([\s\S]*?)\s*```/)[1];
         }
         const remediation = JSON.parse(jsonText);
-        console.log("[submitTutorialFeedback] Parsed AI remediation.");
 
         const problemsRes = await pool.query(
             `SELECT problem_id, title, difficulty FROM problems WHERE problem_id = ANY($1::int[])`,
             [remediation.problem_ids]
         );
-        console.log(`[submitTutorialFeedback] Fetched ${problemsRes.rows.length} remediation problems.`);
 
         res.status(200).json({
             success: true,
@@ -406,9 +379,7 @@ const submitTutorialFeedback = async (req, res) => {
     } catch (err) {
         console.error('[submitTutorialFeedback] Error:', err.message);
         if (err instanceof SyntaxError) {
-             console.error("RAW AI RESPONSE (Failed to parse)");
-             console.error(aiResponseText);
-           
+             console.error("RAW AI RESPONSE (Failed to parse)", aiResponseText);
              return res.status(500).json({ success: false, message: "Failed to understand AI's response." });
         }
         res.status(500).json({ success: false, message: 'Failed to get remediation.' });
@@ -417,11 +388,12 @@ const submitTutorialFeedback = async (req, res) => {
     }
 };
 
+
+// --- generateLearningPath (FULLY REFACTORED) ---
 const generateLearningPath = async (req, res) => {
     const userId = req.user?.user_id;
     console.log(`[generateLearningPath] POST /generate-path for User ${userId}`);
     if (!userId) {
-        console.warn("[generateLearningPath] User not authenticated.");
         return res.status(401).json({ success: false, message: "User not authenticated." });
     }
 
@@ -429,103 +401,114 @@ const generateLearningPath = async (req, res) => {
     try {
         genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     } catch (e) {
-        console.error("[generateLearningPath] Failed to initialize Gemini AI:", e.message);
         return res.status(500).json({ success: false, message: "AI service is misconfigured." });
     }
 
     let aiResponseText = "";
     try {
-        console.log("[generateLearningPath] fetching user data, prereqs, and topics...");
+        console.log("[generateLearningPath] fetching user data and prereqs...");
+        
+        // 1. Fetch all data
         const masteryRes = await pool.query(
             `SELECT topic_name, mastery_score FROM user_topic_mastery WHERE user_id = $1`,
             [userId]
         );
-        const userMastery = masteryRes.rows;
         const prereqRes = await pool.query(`SELECT * FROM topic_prerequisites`);
-        const prerequisites = prereqRes.rows;
-        const topicsRes = await pool.query(`SELECT topic_name FROM tutorials`);
-        const allTopics = topicsRes.rows.map(r => r.topic_name);
 
+        // 2. Process data for prompt and logic
+        const userMasteryMap = new Map(masteryRes.rows.map(r => [r.topic_name, r.mastery_score]));
+        const prereqMap = new Map();
+        prereqRes.rows.forEach(r => {
+            if (!prereqMap.has(r.topic_id)) {
+                prereqMap.set(r.topic_id, []);
+            }
+            prereqMap.get(r.topic_id).push(r.prerequisite_id);
+        });
+
+        // 3. Create the simplified prompt with NEW thresholds
         const prompt = `
-            You are a JSON-only API that creates a complete learning path for a user.
-
-            Input data:
-            - "userMastery": topic_name with mastery_score
-            - "allTopics": all available tutorial topics
-            - "prerequisites": dependencies between topics
-
-            GOAL:
-            Return an ordered learning path covering ALL topics the user should study or improve upon.
-
-            RULES:
-            1. Start from topics where mastery_score <= 0 (beginner level).
-            2. Respect prerequisites — a topic appears only after all its prerequisites are above 20 mastery_score.
-            3. Each topic should include a difficulty:
-                - "Easy" if mastery_score <= 0
-                - "Medium" if 1–20
-                - "Hard" if >50 (mastered but can be revisited)
-            4. If a user already has >50 on all topics, order them from weakest (lowest >20) to strongest and mark all as "Hard".
-            5. Return ONLY JSON in this format:
-                {
-                    "learning_path": [
-                        {"topic": "Topic1", "difficulty": "Easy"},
-                        {"topic": "Topic2", "difficulty": "Medium"},
-                        ...
-                    ]
-                }
+            You are an expert Computer Science tutor. A user's knowledge is represented by a "mastery_score".
+            - A score of 0-15 means "Beginner".
+            - A score of 16-40 means "Intermediate".
+            - A score over 40 means "Mastered".
+            
+            Based on this, identify the top 3-5 topics the user should focus on *next*.
+            
+            - Prioritize topics where the user is a "Beginner" (score <= 15).
+            - Only recommend topics if their prerequisites have been at least "Intermediate" (score > 15).
+            - Return *only* a valid JSON array of strings, with no other text.
+            
+            EXAMPLE: ["Arrays", "Recursion", "Trees"]
 
             DATA:
             {
-                "userMastery": ${JSON.stringify(userMastery)},
-                "allTopics": ${JSON.stringify(allTopics)},
-                "prerequisites": ${JSON.stringify(prerequisites)}
+                "userMastery": ${JSON.stringify(masteryRes.rows)},
+                "prerequisites": ${JSON.stringify(prereqRes.rows)}
             }
         `;
-
-        console.log("[generateLearningPath] Asking AI for full learning path...");
+        
+        console.log("[generateLearningPath] Asking AI for *next recommended topics*...");
         const model = genAI.getGenerativeModel({ model: AImodel});
         const result = await model.generateContent(prompt);
         const response = await result.response;
         aiResponseText = response.text();
-        console.log("[generateLearningPath] Raw AI Response:\n", aiResponseText);
 
-        let jsonText = aiResponseText.trim(); 
-        if (jsonText.startsWith("```json")) {
-            const match = jsonText.match(/```json\s*([\s\S]*?)\s*```/); 
-            if (match && match[1]) {
-                 jsonText = match[1].trim(); 
-            }
+        // 4. Parse AI response (a simple array of strings)
+        let jsonText = aiResponseText.trim().replace(/```json/g, "").replace(/```/g, "");
+        const recommendedTopics = JSON.parse(jsonText); 
+        console.log("[generateLearningPath] Parsed AI recommendations:", recommendedTopics);
+
+        if (!Array.isArray(recommendedTopics) || recommendedTopics.length === 0) {
+            return res.status(400).json({ success: false, message: "AI did not generate a valid path." });
         }
-        const aiData = JSON.parse(jsonText); 
-        const learningPath = aiData.learning_path;
-        console.log("[generateLearningPath] Parsed AI learning path:", learningPath);
-
-        if (!Array.isArray(learningPath) || learningPath.length === 0) {
-            console.warn("[generateLearningPath] AI returned empty or invalid path.");
-            return res.status(400).json({ success: false, message: "AI did not generate a valid learning path." });
-        }
-
+        
+        // 5. --- "CODE AS VALIDATOR" LOGIC ---
+        const finalPath = [];
         const problemIds = [];
-        for (const item of learningPath) {
-            const { topic, difficulty } = item;
-            const problemsRes = await pool.query(
-                `SELECT problem_id FROM problems WHERE category = $1 AND difficulty = $2 ORDER BY problem_id LIMIT 3`,
-                [topic, difficulty]
+
+        for (const topic of recommendedTopics) {
+            // 5a. Check prerequisites in code
+            const prereqs = prereqMap.get(topic) || [];
+            const prereqMasteryThreshold = 15; // Prereqs must be > 15
+            
+            const prereqsMet = prereqs.every(prereqTopic => 
+                (userMasteryMap.get(prereqTopic) || 0) > prereqMasteryThreshold
             );
-            if (problemsRes.rows.length === 0) {
-                console.warn(`[generateLearningPath] No problems for ${topic}/${difficulty}, trying fallback...`);
-                const fallback = await pool.query(
-                    `SELECT problem_id FROM problems WHERE category = $1 AND difficulty = 'Easy' LIMIT 3`,
-                    [topic]
-                );
-                problemIds.push(...fallback.rows.map(r => r.problem_id));
-            } else {
-                problemIds.push(...problemsRes.rows.map(r => r.problem_id));
+
+            if (!prereqsMet) {
+                console.warn(`[generateLearningPath] Skipping topic "${topic}" (prerequisites not met).`);
+                continue; 
             }
+
+            // 5b. Determine difficulty in code (using tuned thresholds)
+            const score = userMasteryMap.get(topic) || 0;
+            let difficulty;
+            if (score <= 15) difficulty = 'Easy';        // Range 0-15
+            else if (score <= 40) difficulty = 'Medium'; // Range 16-40
+            else difficulty = 'Hard';                    // Range 41+
+
+            finalPath.push({ topic, difficulty });
+
+            // 5c. Fetch 2 problems for this valid topic + difficulty
+            const problemsRes = await pool.query(
+                `SELECT p.problem_id 
+                 FROM problems p
+                 LEFT JOIN user_problem up ON p.problem_id = up.problem_id AND up.user_id = $3
+                 WHERE p.category = $1 
+                   AND p.difficulty = $2
+                   AND (up.solved IS NULL OR up.solved = FALSE)
+                 ORDER BY p.problem_id 
+                 LIMIT 2`, 
+                [topic, difficulty, userId]
+            );
+            
+            problemIds.push(...problemsRes.rows.map(r => r.problem_id));
         }
+        // --- END OF NEW LOGIC ---
 
         console.log(`[generateLearningPath] Collected ${problemIds.length} total problems for path.`);
 
+        // 6. Save the new path to the database
         const client = await pool.connect();
         try {
             await client.query("BEGIN");
@@ -537,7 +520,7 @@ const generateLearningPath = async (req, res) => {
                 );
             }
             await client.query("COMMIT");
-            console.log("[generateLearningPath] Saved new full path to DB.");
+            console.log("[generateLearningPath] Saved new focused path to DB.");
         } catch (e) {
             await client.query("ROLLBACK");
             throw e;
@@ -545,6 +528,7 @@ const generateLearningPath = async (req, res) => {
             client.release();
         }
 
+        // 7. Return the full path
         const pathRes = await pool.query(
             `SELECT p.problem_id, p.title, p.category, p.difficulty, ulp.status
              FROM user_learning_path ulp
@@ -557,28 +541,26 @@ const generateLearningPath = async (req, res) => {
         console.log(`[generateLearningPath] Returning complete path with ${pathRes.rows.length} problems.`);
         res.status(200).json({
             success: true,
-            message: "Full learning path generated!",
-            learning_path: learningPath,
-            problems: pathRes.rows
+            message: "A new learning path has been generated!",
+            learning_path: finalPath, // The high-level topic path
+            problems: pathRes.rows   // The specific problems for the path
         });
 
     } catch (error) {
         console.error("Error generating full learning path:", error.message);
         if (error instanceof SyntaxError) {
-            console.error("RAW AI RESPONSE (Failed to parse)");
-            console.error(aiResponseText);
-            
+            console.error("RAW AI RESPONSE (Failed to parse)", aiResponseText);
             return res.status(500).json({ success: false, message: "Failed to parse AI response." });
         }
         res.status(500).json({ success: false, message: "Failed to generate full learning path." });
     }
 };
 
+// --- getLearningPath (Unchanged) ---
 const getLearningPath = async (req, res) => {
     const userId = req.user?.user_id;
     console.log(`[getLearningPath] GET /get-path for User ${userId}`);
     if (!userId) {
-        console.warn("[getLearningPath] User not authenticated.");
         return res.status(401).json({ success: false, message: "User not authenticated." });
     }
     

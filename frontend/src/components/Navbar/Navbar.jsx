@@ -23,18 +23,18 @@ export default function Navbar(){
             <div className={styles.centerNav}>
             </div>
             <div className={styles.rightNav}>
-                {user && (
+                {/* {user && (
                 <div>Battle</div>
-                )}
+                )} */}
                 
                 {/* Use the dynamic onlineCount here */}
                 <div className={styles.totalOnline}>
                     {onlineCount} online
                 </div>
                 
-                <div className={styles.themeToggle}>
+                {/* <div className={styles.themeToggle}>
                     <DarkThemeIcon/>
-                </div>
+                </div> */}
                 {user && (
                     <div className={styles.profileButton}>
                         <div className={styles.avatar}></div>
