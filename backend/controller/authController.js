@@ -96,6 +96,12 @@ const logAuth = (req, res, next) => {
             if (err) { 
                 return res.status(500).json({ success: false, message: 'Login failed' }); 
             }
+            // inside req.login callback after success
+            console.log('[AUTH] login success - user id:', user.user_id || user.id || '(no id)');
+            console.log('[AUTH] req.sessionID after login:', req.sessionID);
+            console.log('[AUTH] req.session keys after login:', req.session ? Object.keys(req.session) : null);
+            console.log('[AUTH] response Set-Cookie header (if any):', res.getHeader ? res.getHeader('Set-Cookie') : '(no header API)');
+
             return res.status(200).json({ success: true, user, message: 'Login successful' });
         });
     })(req, res, next);

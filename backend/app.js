@@ -39,6 +39,20 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+// TEMP DEBUG - add right after app.use(express.json()) and before app.use(sessionMiddleware)
+app.use((req, res, next) => {
+  console.log('===== REQ START =====');
+  console.log('[DBG] Time:', new Date().toISOString());
+  console.log('[DBG] URL:', req.method, req.originalUrl);
+  console.log('[DBG] Origin header:', req.headers.origin);
+  console.log('[DBG] Cookie header present?:', !!req.headers.cookie);
+  if (req.headers.cookie) {
+    // print only the first 300 chars to avoid huge logs
+    console.log('[DBG] Cookie (truncated):', String(req.headers.cookie).slice(0, 300));
+  }
+  next();
+});
+
 
 // --- Session middleware (shared with socket.io) ---
 const sessionMiddleware = session({
@@ -58,6 +72,21 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+// TEMP DEBUG - after passport.session()
+app.use((req, res, next) => {
+  console.log('--- POST-PASSPORT MIDDLEWARE ---');
+  console.log('[DBG2] URL:', req.method, req.originalUrl);
+  console.log('[DBG2] sessionID:', req.sessionID);
+  console.log('[DBG2] session keys:', req.session ? Object.keys(req.session) : null);
+  // If you store passport user under req.session.passport, show it
+  try {
+    console.log('[DBG2] session.passport (truncated):', req.session && req.session.passport ? JSON.stringify(req.session.passport).slice(0,200) : null);
+  } catch (e) {
+    console.log('[DBG2] session.passport (error stringify)');
+  }
+  console.log('[DBG2] req.user present?:', !!req.user, 'user id:', req.user ? (req.user.user_id || req.user.id) : null);
+  next();
+});
 
 // --- Socket.IO setup ---
 // Allow the same origins for socket.io CORS
