@@ -1,3 +1,7 @@
+console.log(`===== SERVER STARTING =====`);
+console.log(`Server is running in [${process.env.NODE_ENV}] mode.`);
+console.log(`===========================`);
+
 // app.js
 const express = require('express');
 require('dotenv').config();
