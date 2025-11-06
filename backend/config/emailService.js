@@ -5,10 +5,11 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: process.env.AUTH_EMAIL,
+        user: process.env.AUTH_MAIL,
         pass: process.env.AUTH_PASS,
     },
 });
+
 
 /**
  * Sends a verification email to a user.

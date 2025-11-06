@@ -10,7 +10,7 @@ function getInd(req, res) {
     return res.status(200).json({ message: 'Hi', status: 'success' });
 }
 
-// Validation logic is unchanged
+
 const validateSignup = [
     body('username')
         .trim()
