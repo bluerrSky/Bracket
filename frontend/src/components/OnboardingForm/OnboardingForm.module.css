@@ -25,6 +25,7 @@
 }
 .topicRow {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
@@ -99,4 +100,39 @@
     color: white;
     text-align: center;
     padding: 2rem;
+}
+
+/* --- Add this at the bottom of OnboardingForm.module.css --- */
+
+@media (max-width: 600px) {
+    /* 1. Make the form less cramped on small screens 
+    */
+    .formContainer {
+        padding: 1.5rem 1rem;
+    }
+
+    /* 2. Stack the topic row items vertically instead of side-by-side
+    */
+    .topicRow {
+        flex-direction: column; /* Stack label and buttons vertically */
+        align-items: center;     /* Center them in the card */
+        gap: 1rem;               /* Add space between the label and the buttons */
+    }
+
+    /* 3. Make the button group wrap and center itself if it's too long
+    */
+    .buttonGroup {
+        flex-wrap: wrap;         /* Allow buttons to wrap to a new line */
+        justify-content: center; /* Center the buttons */
+    }
+
+    /* 4. (Optional) Make text a bit smaller on mobile 
+    */
+    .formContainer h2 {
+        font-size: var(--font-size-lg);
+    }
+    .formContainer p {
+        font-size: var(--font-size-base);
+        margin-bottom: 1.5rem;
+    }
 }

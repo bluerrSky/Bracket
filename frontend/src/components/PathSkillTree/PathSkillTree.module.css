@@ -105,3 +105,14 @@
     font-family: var(--ff-heading);
     
 }
+
+/* --- Add this at the bottom of PathSkillTree.module.css --- */
+
+/* Hide the skill tree on tablets and phones.
+  1024px is a good breakpoint.
+*/
+@media (max-width: 1024px) {
+    .skillTreeContainer {
+        display: none;
+    }
+}

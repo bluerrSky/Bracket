@@ -11,11 +11,12 @@ const searchEngineId = process.env.GOOGLE_PSE_CX;
 async function searchYouTube(searchTerm) {
     try {
         const searchResults = await ytsr(searchTerm, { pages: 1 });
+        console.log(JSON.stringify(searchResults.items, null, 2));
         return searchResults.items
             .filter(item => item.type === 'video') 
             .slice(0, 3) 
             .map(item => ({
-                title: item.title || 'Untitled',
+                title: item.name || 'Untitled',
                 url: item.url || '',
                 thumbnail: item.bestThumbnail?.url || item.thumbnails?.[0]?.url || null
             }));

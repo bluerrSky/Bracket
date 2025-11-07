@@ -105,3 +105,45 @@
     border-radius: 6px;
     font-weight: 500;
 }
+
+/* --- Add this at the bottom of PathDashboard.module.css --- */
+
+@media (max-width: 600px) {
+    
+    /* 1. Make the form less cramped */
+    .pathContainer {
+        padding: 1.5rem 1rem;
+    }
+
+    /* 2. Stack the header items */
+    .header {
+        flex-direction: column;
+        align-items: stretch; /* Make items full-width */
+        gap: 1rem;
+    }
+
+    .regenButton {
+        width: 100%; /* Make button full width */
+    }
+
+    /* 3. Stack the main problem item's content */
+    .problemItem {
+        flex-direction: column;
+        align-items: stretch; /* Make info/actions blocks full-width */
+        gap: 1.25rem;         /* Add space between the info and actions */
+        padding: 1rem;      /* Adjust padding for mobile */
+    }
+
+    /* 4. Stack the info items vertically */
+    .problemInfo {
+        flex-direction: column;
+        align-items: flex-start; /* Align tags/title to the left */
+        gap: 0.75rem;            /* Add space between tags and title */
+        flex-wrap: nowrap;       /* Prevent weird wrapping */
+    }
+
+    /* 5. Make the action buttons space themselves out */
+    .actions {
+        justify-content: space-between;
+    }
+}

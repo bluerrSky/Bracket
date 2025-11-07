@@ -98,19 +98,14 @@ export default function REPL() {
                         {resourcesMutation.isPending ? "Suggesting..." : 'Suggest Resources 📚'}
                     </button>
                     
-                {resourcesMutation.isSuccess && (
-                    <div className={styles.resourcesList}>
-                        <h4>Here are some helpful resources:</h4>
-                        
-                        {/* Map over each CONCEPT (e.g., "Binary Search") */}
                         {resources.map((resource, index) => (
                             <div key={index} className={styles.resourceItem}>
                                 
-                                {/* 1. Display the concept and description */}
+                                {/* --- 1. THIS IS THE MISSING CONCEPT/DESCRIPTION --- */}
                                 <strong>{resource.concept}</strong>
                                 <p>{resource.description}</p>
 
-                                {/* 2. Display the Article Links (if any exist) */}
+                                {/* --- 2. THIS IS THE MISSING ARTICLES SECTION --- */}
                                 {resource.links && resource.links.length > 0 && (
                                     <>
                                         <h5>Articles:</h5>
@@ -126,23 +121,27 @@ export default function REPL() {
                                     </>
                                 )}
 
-                                {/* 3. Display the Video Links (if any exist) */}
+                                {/* --- 3. THIS IS THE VIDEO SECTION (Now correct) --- */}
                                 {resource.videos && resource.videos.length > 0 && (
                                     <>
                                         <h5>Videos:</h5>
                                         <ul>
                                             {resource.videos.map((video, videoIndex) => (
-                                                <li key={videoIndex} className={styles.videoItem}>
-                                                    {video.thumbnail && (
-                                                        <img 
-                                                            src={video.thumbnail} 
-                                                            alt="video thumbnail" 
-                                                            width="80" 
-                                                            style={{ marginRight: '10px', verticalAlign: 'middle' }} 
-                                                        />
-                                                    )}
-                                                    <a href={video.url} target="_blank" rel="noopener noreferrer">
-                                                        {video.title}
+                                                <li key={videoIndex}>
+                                                    <a 
+                                                        href={video.url} 
+                                                        target="_blank" 
+                                                        rel="noopener noreferrer"
+                                                        className={styles.videoLink}
+                                                    >
+                                                        {video.thumbnail && (
+                                                            <img 
+                                                                src={video.thumbnail} 
+                                                                alt="video thumbnail" 
+                                                                className={styles.videoThumbnail} 
+                                                            />
+                                                        )}
+                                                        <span>{video.title}</span>
                                                     </a>
                                                 </li>
                                             ))}
@@ -151,8 +150,6 @@ export default function REPL() {
                                 )}
                             </div>
                         ))}
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
