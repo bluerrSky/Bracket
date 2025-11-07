@@ -1,6 +1,7 @@
 .REPLContainer{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
+    /* grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); */
     
     /* height: 100vh; */
 }
@@ -8,14 +9,22 @@
 .REPLContainer > *{
 
 }
+
+.codeEditor{
+    flex: auto;
+    width: 600px;
+    min-width: 300px;
+} 
+
+.problemDesc{
+    flex: auto;
+}
 /* 
 .problemDesc{
     width: max(600px, 35%);
 }
 
-.codeEditor{
-    width: max(600px, 65%);
-} s
+
   */
 
 /* In frontend/src/pages/REPL/REPL.module.css */

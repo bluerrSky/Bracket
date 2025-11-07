@@ -7,6 +7,9 @@
     align-items: center;
     font-family: var(--ff-heading);
     padding: 0.5rem 1rem;
+    /* Add relative positioning for the dropdown */
+    position: relative; 
+    z-index: 100;
 }
 
 a{
@@ -32,7 +35,15 @@ a{
 .rightNav{
     display: flex;
     gap: 1.5rem;
+    align-items: center;
     font-size: var(--font-size-md);
+}
+
+/* This is the new name for the original rightNav links */
+.desktopNav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
 }
 
 .rightNav > *{
@@ -53,3 +64,92 @@ a{
     background: url(https://api.dicebear.com/9.x/pixel-art/svg?seed=Aidan);
 }
 
+.logoutButton{
+    /* border: 1px solid white; */
+    background-color: var(--clr-side-kick);
+    color: var(--clr-primary);
+    border: 1px solid var(--clr-secondary);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: var(--ff-heading);
+    font-size: var(--font-size-md);
+}
+
+/* Styles for the login button (from Navbar.jsx) */
+.loginButton {
+    background-color: var(--clr-side-kick);
+    color: var(--clr-primary);
+    border: 1px solid var(--clr-secondary);
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: var(--ff-heading);
+    font-size: var(--font-size-md);
+    text-decoration: none;
+}
+
+
+/* --- ⬇️ NEW STYLES FOR RESPONSIVE MENU ⬇️ --- */
+
+/* 1. Hamburger Icon */
+.hamburger {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+.hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: var(--clr-secondary);
+    transition: all 0.3s ease;
+}
+
+/* 2. Mobile Menu Panel */
+.mobileMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    padding: 2rem;
+    
+    background-color: var(--clr-primary);
+    border-bottom: 2px solid var(--clr-side-kick);
+    
+    position: absolute;
+    top: 100%; /* Position it right below the navbar */
+    right: 0;
+    width: 100%;
+
+    /* Hide it off-screen by default */
+    transform: translateY(-150%);
+    opacity: 0;
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+
+    /* Ensure links inside are styled */
+    font-size: var(--font-size-md);
+}
+
+.mobileMenu > * {
+    color: var(--clr-secondary);
+}
+
+/* 3. Open state for Mobile Menu */
+.mobileMenu.open {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* 4. The Media Query */
+/* At 768px or less, hide desktop nav and show hamburger */
+@media (max-width: 768px) {
+    .desktopNav {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex; /* Show the hamburger */
+    }
+}

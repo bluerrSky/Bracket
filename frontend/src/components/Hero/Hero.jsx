@@ -16,7 +16,7 @@ export default function Hero(){
                     <span className={styles['frag-3']}>Conquer. </span>
                 </div>
                 <div className={styles.ctaText}>
-                    Step into the arena and challenge coders in real-time battles.
+                    Step into the arena and challenge yourself.
                 </div>
 
                 <div className={styles.ctaBtns}>

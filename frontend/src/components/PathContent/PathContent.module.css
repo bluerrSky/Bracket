@@ -1,7 +1,7 @@
 .pathContentContainer{
     /* border: 2px solid darkgoldenrod; */
-    flex: 1;
-    min-width: 600px;
+    flex: auto;
+    width: 500px;
     /* height: 300vh; */
     color: white;
     display: flex;
@@ -42,7 +42,7 @@
     text-shadow: 0 0 0.15em #fff;
 }
 .contentSections{
-    width: 100ch;
+    max-width: 100ch;
     /* margin-left: max(100px, 12%); */
 }
 

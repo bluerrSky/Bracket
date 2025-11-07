@@ -40,9 +40,10 @@
     background-color: var(--clr-primary);
     color: var(--clr-secondary);
     border-radius: 8px;
-    font-size: calc(var(--font-size-base) + 0.6rem);
+    font-size: calc(var(--font-size-base) + 0.3rem);
     font-family: inherit;
     cursor: pointer;
+    width: max-content;
 }
 
 .heroImg{

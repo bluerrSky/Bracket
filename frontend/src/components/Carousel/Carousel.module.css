@@ -46,7 +46,8 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  cursor: pointer;
+  /* cursor: pointer; */
+  /* pointer-events: none; */
 }
 
 .arrowLeft {
@@ -60,10 +61,14 @@
 
 @media (max-width: 1000px) {
   .arrowLeft {
-  transform: translateY(-50%) translateX(-45%);
+  transform: scale(0.8) translateY(-50%) translateX(-45%);
   }
   .arrowRight {
   right: 0;
-  transform: translateY(-50%) translateX(45%) rotate(180deg);
+  transform: scale(0.8) translateY(-50%) translateX(45%) rotate(180deg);
+}
+
+.card{
+  transform: scale(0.8);
 }
 }
